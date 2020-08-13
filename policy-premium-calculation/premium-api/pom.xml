@@ -10,12 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>premium-api</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>policy-admin-api</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-    </dependencies>
+
 
 </project>

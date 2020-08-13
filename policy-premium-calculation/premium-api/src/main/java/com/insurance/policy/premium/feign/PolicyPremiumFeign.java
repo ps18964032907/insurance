@@ -18,6 +18,6 @@ public interface PolicyPremiumFeign {
  * @author mhd
  * @date 2020/8/13
  */
-@RequestMapping("calculatePolicy")
-ComBinedPolicy calculatePolicy(ComBinedPolicy comBinedPolicy);
+@RequestMapping("/premium/calculatePolicy")
+ ComBinedPolicy calculatePolicy(ComBinedPolicy comBinedPolicy);
 }
