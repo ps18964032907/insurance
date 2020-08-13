@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *@Description //保费计算
  */
 @FeignClient("policy-premium-calculation")
-public interface PolicyPremiumFeign {@RequestMapping("calculatePolicy")
+public interface PolicyPremiumFeign {
 
 /**
  * @Description 传comBinedPolicy对象计算保费返回comBinedPolicy对象
@@ -18,5 +18,6 @@ public interface PolicyPremiumFeign {@RequestMapping("calculatePolicy")
  * @author mhd
  * @date 2020/8/13
  */
+@RequestMapping("calculatePolicy")
 ComBinedPolicy calculatePolicy(ComBinedPolicy comBinedPolicy);
 }
