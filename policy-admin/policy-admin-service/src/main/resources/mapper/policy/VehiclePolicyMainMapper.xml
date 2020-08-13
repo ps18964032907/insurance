@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.insurance.policy.admin.mapper.VehiclePolicyMainMapper">
+    
+    <resultMap type="VehiclePolicyMain" id="VehiclePolicyMainResult">
+        <result property="id"    column="id"    />
+        <result property="policyNo"    column="policy_no"    />
+        <result property="associatedPolicyId"    column="associated_policy_id"    />
+        <result property="belongToHanderId"    column="belong_to_hander_id"    />
+        <result property="belongToOrgId"    column="belong_to_org_id"    />
+        <result property="businessSourceCode"    column="business_source_code"    />
+        <result property="policyStatus"    column="policy_status"    />
+        <result property="effectiveDate"    column="effective_date"    />
+        <result property="expiryDate"    column="expiry_date"    />
+        <result property="standPremium"    column="stand_premium"    />
+        <result property="duePremium"    column="due_premium"    />
+        <result property="version"    column="version"    />
+        <result property="insertTime"    column="insert_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="compulsoryPolicy"    column="compulsory_policy"    />
+        <result property="epolicyUrl"    column="epolicy_url"    />
+    </resultMap>
+
+    <sql id="selectVehiclePolicyMainVo">
+        select id, policy_no, associated_policy_id, belong_to_hander_id, belong_to_org_id, business_source_code, policy_status, effective_date, expiry_date, stand_premium, due_premium, version, insert_time, update_time, compulsory_policy, epolicy_url from t_vehicle_policy_main
+    </sql>
+
+    <select id="selectVehiclePolicyMainList" parameterType="VehiclePolicyMain" resultMap="VehiclePolicyMainResult">
+        <include refid="selectVehiclePolicyMainVo"/>
+        <where>  
+            <if test="policyNo != null  and policyNo != ''"> and policy_no = #{policyNo}</if>
+            <if test="associatedPolicyId != null "> and associated_policy_id = #{associatedPolicyId}</if>
+            <if test="belongToHanderId != null "> and belong_to_hander_id = #{belongToHanderId}</if>
+            <if test="belongToOrgId != null "> and belong_to_org_id = #{belongToOrgId}</if>
+            <if test="businessSourceCode != null  and businessSourceCode != ''"> and business_source_code = #{businessSourceCode}</if>
+            <if test="policyStatus != null  and policyStatus != ''"> and policy_status = #{policyStatus}</if>
+            <if test="effectiveDate != null "> and effective_date = #{effectiveDate}</if>
+            <if test="expiryDate != null "> and expiry_date = #{expiryDate}</if>
+            <if test="standPremium != null "> and stand_premium = #{standPremium}</if>
+            <if test="duePremium != null "> and due_premium = #{duePremium}</if>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="insertTime != null "> and insert_time = #{insertTime}</if>
+            <if test="compulsoryPolicy != null  and compulsoryPolicy != ''"> and compulsory_policy = #{compulsoryPolicy}</if>
+            <if test="epolicyUrl != null  and epolicyUrl != ''"> and epolicy_url = #{epolicyUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectVehiclePolicyMainById" parameterType="Long" resultMap="VehiclePolicyMainResult">
+        <include refid="selectVehiclePolicyMainVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVehiclePolicyMain" parameterType="VehiclePolicyMain" useGeneratedKeys="true" keyProperty="id">
+        insert into t_vehicle_policy_main
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="policyNo != null">policy_no,</if>
+            <if test="associatedPolicyId != null">associated_policy_id,</if>
+            <if test="belongToHanderId != null">belong_to_hander_id,</if>
+            <if test="belongToOrgId != null">belong_to_org_id,</if>
+            <if test="businessSourceCode != null">business_source_code,</if>
+            <if test="policyStatus != null">policy_status,</if>
+            <if test="effectiveDate != null">effective_date,</if>
+            <if test="expiryDate != null">expiry_date,</if>
+            <if test="standPremium != null">stand_premium,</if>
+            <if test="duePremium != null">due_premium,</if>
+            <if test="version != null">version,</if>
+            <if test="insertTime != null">insert_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="compulsoryPolicy != null and compulsoryPolicy != ''">compulsory_policy,</if>
+            <if test="epolicyUrl != null">epolicy_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="policyNo != null">#{policyNo},</if>
+            <if test="associatedPolicyId != null">#{associatedPolicyId},</if>
+            <if test="belongToHanderId != null">#{belongToHanderId},</if>
+            <if test="belongToOrgId != null">#{belongToOrgId},</if>
+            <if test="businessSourceCode != null">#{businessSourceCode},</if>
+            <if test="policyStatus != null">#{policyStatus},</if>
+            <if test="effectiveDate != null">#{effectiveDate},</if>
+            <if test="expiryDate != null">#{expiryDate},</if>
+            <if test="standPremium != null">#{standPremium},</if>
+            <if test="duePremium != null">#{duePremium},</if>
+            <if test="version != null">#{version},</if>
+            <if test="insertTime != null">#{insertTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="compulsoryPolicy != null and compulsoryPolicy != ''">#{compulsoryPolicy},</if>
+            <if test="epolicyUrl != null">#{epolicyUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVehiclePolicyMain" parameterType="VehiclePolicyMain">
+        update t_vehicle_policy_main
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="policyNo != null">policy_no = #{policyNo},</if>
+            <if test="associatedPolicyId != null">associated_policy_id = #{associatedPolicyId},</if>
+            <if test="belongToHanderId != null">belong_to_hander_id = #{belongToHanderId},</if>
+            <if test="belongToOrgId != null">belong_to_org_id = #{belongToOrgId},</if>
+            <if test="businessSourceCode != null">business_source_code = #{businessSourceCode},</if>
+            <if test="policyStatus != null">policy_status = #{policyStatus},</if>
+            <if test="effectiveDate != null">effective_date = #{effectiveDate},</if>
+            <if test="expiryDate != null">expiry_date = #{expiryDate},</if>
+            <if test="standPremium != null">stand_premium = #{standPremium},</if>
+            <if test="duePremium != null">due_premium = #{duePremium},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="insertTime != null">insert_time = #{insertTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="compulsoryPolicy != null and compulsoryPolicy != ''">compulsory_policy = #{compulsoryPolicy},</if>
+            <if test="epolicyUrl != null">epolicy_url = #{epolicyUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVehiclePolicyMainById" parameterType="Long">
+        delete from t_vehicle_policy_main where id = #{id}
+    </delete>
+
+    <delete id="deleteVehiclePolicyMainByIds" parameterType="String">
+        delete from t_vehicle_policy_main where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

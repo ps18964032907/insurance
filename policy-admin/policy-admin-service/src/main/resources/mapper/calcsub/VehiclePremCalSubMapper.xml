@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.insurance.policy.admin.mapper.VehiclePremCalSubMapper">
+    
+    <resultMap type="VehiclePremCalSub" id="VehiclePremCalSubResult">
+        <result property="id"    column="id"    />
+        <result property="policyId"    column="policy_id"    />
+        <result property="proposalQueryNo"    column="proposal_query_no"    />
+        <result property="proposalPreConfirmNo"    column="proposal_pre_confirm_no"    />
+        <result property="proposalConfirmNo"    column="proposal_confirm_no"    />
+        <result property="proposalQueryNoExpireDate"    column="proposal_query_no_expire_date"    />
+        <result property="proposalPreConfirmNoExpireDate"    column="proposal_pre_confirm_no_expire_date"    />
+        <result property="ncdRate"    column="ncd_rate"    />
+        <result property="trafficViolationRate"    column="traffic_violation_rate"    />
+        <result property="uwRate"    column="uw_rate"    />
+        <result property="platformBenchRiskPrem"    column="platform_bench_risk_prem"    />
+        <result property="version"    column="version"    />
+        <result property="insertTime"    column="insert_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVehiclePremCalSubVo">
+        select id, policy_id, proposal_query_no, proposal_pre_confirm_no, proposal_confirm_no, proposal_query_no_expire_date, proposal_pre_confirm_no_expire_date, ncd_rate, traffic_violation_rate, uw_rate, platform_bench_risk_prem, version, insert_time, update_time from t_vehicle_prem_cal_sub
+    </sql>
+
+    <select id="selectVehiclePremCalSubList" parameterType="VehiclePremCalSub" resultMap="VehiclePremCalSubResult">
+        <include refid="selectVehiclePremCalSubVo"/>
+        <where>  
+            <if test="policyId != null "> and policy_id = #{policyId}</if>
+            <if test="proposalQueryNo != null  and proposalQueryNo != ''"> and proposal_query_no = #{proposalQueryNo}</if>
+            <if test="proposalPreConfirmNo != null  and proposalPreConfirmNo != ''"> and proposal_pre_confirm_no = #{proposalPreConfirmNo}</if>
+            <if test="proposalConfirmNo != null  and proposalConfirmNo != ''"> and proposal_confirm_no = #{proposalConfirmNo}</if>
+            <if test="proposalQueryNoExpireDate != null "> and proposal_query_no_expire_date = #{proposalQueryNoExpireDate}</if>
+            <if test="proposalPreConfirmNoExpireDate != null "> and proposal_pre_confirm_no_expire_date = #{proposalPreConfirmNoExpireDate}</if>
+            <if test="ncdRate != null "> and ncd_rate = #{ncdRate}</if>
+            <if test="trafficViolationRate != null "> and traffic_violation_rate = #{trafficViolationRate}</if>
+            <if test="uwRate != null "> and uw_rate = #{uwRate}</if>
+            <if test="platformBenchRiskPrem != null "> and platform_bench_risk_prem = #{platformBenchRiskPrem}</if>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="insertTime != null "> and insert_time = #{insertTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectVehiclePremCalSubById" parameterType="Long" resultMap="VehiclePremCalSubResult">
+        <include refid="selectVehiclePremCalSubVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVehiclePremCalSub" parameterType="VehiclePremCalSub" useGeneratedKeys="true" keyProperty="id">
+        insert into t_vehicle_prem_cal_sub
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="policyId != null">policy_id,</if>
+            <if test="proposalQueryNo != null">proposal_query_no,</if>
+            <if test="proposalPreConfirmNo != null">proposal_pre_confirm_no,</if>
+            <if test="proposalConfirmNo != null">proposal_confirm_no,</if>
+            <if test="proposalQueryNoExpireDate != null">proposal_query_no_expire_date,</if>
+            <if test="proposalPreConfirmNoExpireDate != null">proposal_pre_confirm_no_expire_date,</if>
+            <if test="ncdRate != null">ncd_rate,</if>
+            <if test="trafficViolationRate != null">traffic_violation_rate,</if>
+            <if test="uwRate != null">uw_rate,</if>
+            <if test="platformBenchRiskPrem != null">platform_bench_risk_prem,</if>
+            <if test="version != null">version,</if>
+            <if test="insertTime != null">insert_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="policyId != null">#{policyId},</if>
+            <if test="proposalQueryNo != null">#{proposalQueryNo},</if>
+            <if test="proposalPreConfirmNo != null">#{proposalPreConfirmNo},</if>
+            <if test="proposalConfirmNo != null">#{proposalConfirmNo},</if>
+            <if test="proposalQueryNoExpireDate != null">#{proposalQueryNoExpireDate},</if>
+            <if test="proposalPreConfirmNoExpireDate != null">#{proposalPreConfirmNoExpireDate},</if>
+            <if test="ncdRate != null">#{ncdRate},</if>
+            <if test="trafficViolationRate != null">#{trafficViolationRate},</if>
+            <if test="uwRate != null">#{uwRate},</if>
+            <if test="platformBenchRiskPrem != null">#{platformBenchRiskPrem},</if>
+            <if test="version != null">#{version},</if>
+            <if test="insertTime != null">#{insertTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVehiclePremCalSub" parameterType="VehiclePremCalSub">
+        update t_vehicle_prem_cal_sub
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="policyId != null">policy_id = #{policyId},</if>
+            <if test="proposalQueryNo != null">proposal_query_no = #{proposalQueryNo},</if>
+            <if test="proposalPreConfirmNo != null">proposal_pre_confirm_no = #{proposalPreConfirmNo},</if>
+            <if test="proposalConfirmNo != null">proposal_confirm_no = #{proposalConfirmNo},</if>
+            <if test="proposalQueryNoExpireDate != null">proposal_query_no_expire_date = #{proposalQueryNoExpireDate},</if>
+            <if test="proposalPreConfirmNoExpireDate != null">proposal_pre_confirm_no_expire_date = #{proposalPreConfirmNoExpireDate},</if>
+            <if test="ncdRate != null">ncd_rate = #{ncdRate},</if>
+            <if test="trafficViolationRate != null">traffic_violation_rate = #{trafficViolationRate},</if>
+            <if test="uwRate != null">uw_rate = #{uwRate},</if>
+            <if test="platformBenchRiskPrem != null">platform_bench_risk_prem = #{platformBenchRiskPrem},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="insertTime != null">insert_time = #{insertTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVehiclePremCalSubById" parameterType="Long">
+        delete from t_vehicle_prem_cal_sub where id = #{id}
+    </delete>
+
+    <delete id="deleteVehiclePremCalSubByIds" parameterType="String">
+        delete from t_vehicle_prem_cal_sub where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

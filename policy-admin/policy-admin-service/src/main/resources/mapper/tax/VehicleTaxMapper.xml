@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.insurance.policy.admin.mapper.VehicleTaxMapper">
+    
+    <resultMap type="VehicleTax" id="VehicleTaxResult">
+        <result property="id"    column="id"    />
+        <result property="policyId"    column="policy_id"    />
+        <result property="taxPayerNo"    column="tax_payer_no"    />
+        <result property="taxPayerName"    column="tax_payer_name"    />
+        <result property="stdTax"    column="std_tax"    />
+        <result property="currentTax"    column="current_tax"    />
+        <result property="previousTax"    column="previous_tax"    />
+        <result property="overdueFee"    column="overdue_fee"    />
+        <result property="address"    column="address"    />
+        <result property="tel"    column="tel"    />
+        <result property="totalTaxAmount"    column="total_tax_amount"    />
+        <result property="version"    column="version"    />
+        <result property="insertTime"    column="insert_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVehicleTaxVo">
+        select id, policy_id, tax_payer_no, tax_payer_name, std_tax, current_tax, previous_tax, overdue_fee, address, tel, total_tax_amount, version, insert_time, update_time from t_vehicle_tax
+    </sql>
+
+    <select id="selectVehicleTaxList" parameterType="VehicleTax" resultMap="VehicleTaxResult">
+        <include refid="selectVehicleTaxVo"/>
+        <where>  
+            <if test="policyId != null "> and policy_id = #{policyId}</if>
+            <if test="taxPayerNo != null  and taxPayerNo != ''"> and tax_payer_no = #{taxPayerNo}</if>
+            <if test="taxPayerName != null  and taxPayerName != ''"> and tax_payer_name like concat('%', #{taxPayerName}, '%')</if>
+            <if test="stdTax != null "> and std_tax = #{stdTax}</if>
+            <if test="currentTax != null "> and current_tax = #{currentTax}</if>
+            <if test="previousTax != null "> and previous_tax = #{previousTax}</if>
+            <if test="overdueFee != null "> and overdue_fee = #{overdueFee}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="tel != null  and tel != ''"> and tel = #{tel}</if>
+            <if test="totalTaxAmount != null "> and total_tax_amount = #{totalTaxAmount}</if>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="insertTime != null "> and insert_time = #{insertTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectVehicleTaxById" parameterType="Long" resultMap="VehicleTaxResult">
+        <include refid="selectVehicleTaxVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVehicleTax" parameterType="VehicleTax" useGeneratedKeys="true" keyProperty="id">
+        insert into t_vehicle_tax
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="policyId != null">policy_id,</if>
+            <if test="taxPayerNo != null">tax_payer_no,</if>
+            <if test="taxPayerName != null">tax_payer_name,</if>
+            <if test="stdTax != null">std_tax,</if>
+            <if test="currentTax != null">current_tax,</if>
+            <if test="previousTax != null">previous_tax,</if>
+            <if test="overdueFee != null">overdue_fee,</if>
+            <if test="address != null">address,</if>
+            <if test="tel != null">tel,</if>
+            <if test="totalTaxAmount != null">total_tax_amount,</if>
+            <if test="version != null">version,</if>
+            <if test="insertTime != null">insert_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="policyId != null">#{policyId},</if>
+            <if test="taxPayerNo != null">#{taxPayerNo},</if>
+            <if test="taxPayerName != null">#{taxPayerName},</if>
+            <if test="stdTax != null">#{stdTax},</if>
+            <if test="currentTax != null">#{currentTax},</if>
+            <if test="previousTax != null">#{previousTax},</if>
+            <if test="overdueFee != null">#{overdueFee},</if>
+            <if test="address != null">#{address},</if>
+            <if test="tel != null">#{tel},</if>
+            <if test="totalTaxAmount != null">#{totalTaxAmount},</if>
+            <if test="version != null">#{version},</if>
+            <if test="insertTime != null">#{insertTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVehicleTax" parameterType="VehicleTax">
+        update t_vehicle_tax
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="policyId != null">policy_id = #{policyId},</if>
+            <if test="taxPayerNo != null">tax_payer_no = #{taxPayerNo},</if>
+            <if test="taxPayerName != null">tax_payer_name = #{taxPayerName},</if>
+            <if test="stdTax != null">std_tax = #{stdTax},</if>
+            <if test="currentTax != null">current_tax = #{currentTax},</if>
+            <if test="previousTax != null">previous_tax = #{previousTax},</if>
+            <if test="overdueFee != null">overdue_fee = #{overdueFee},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="tel != null">tel = #{tel},</if>
+            <if test="totalTaxAmount != null">total_tax_amount = #{totalTaxAmount},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="insertTime != null">insert_time = #{insertTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVehicleTaxById" parameterType="Long">
+        delete from t_vehicle_tax where id = #{id}
+    </delete>
+
+    <delete id="deleteVehicleTaxByIds" parameterType="String">
+        delete from t_vehicle_tax where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

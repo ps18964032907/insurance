@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.insurance.policy.admin.mapper.VehicleInsuredMapper">
+    
+    <resultMap type="VehicleInsured" id="VehicleInsuredResult">
+        <result property="id"    column="id"    />
+        <result property="policyId"    column="policy_id"    />
+        <result property="licenseNo"    column="license_no"    />
+        <result property="licenseType"    column="license_type"    />
+        <result property="vehicleKind"    column="vehicle_kind"    />
+        <result property="vehicleUseNature"    column="vehicle_use_nature"    />
+        <result property="vehicleFirstRegDate"    column="vehicle_first_reg_date"    />
+        <result property="displacement"    column="displacement"    />
+        <result property="approvedSeatCount"    column="approved_seat_count"    />
+        <result property="vin"    column="vin"    />
+        <result property="engineNo"    column="engine_no"    />
+        <result property="gasType"    column="gas_type"    />
+        <result property="newVehiclePrice"    column="new_vehicle_price"    />
+        <result property="vehicleFactoryName"    column="vehicle_factory_name"    />
+        <result property="industryVehicleCode"    column="industry_vehicle_code"    />
+        <result property="power"    column="power"    />
+        <result property="vehicleQuality"    column="vehicle_quality"    />
+        <result property="version"    column="version"    />
+        <result property="imgUrls"    column="img_urls"    />
+        <result property="insertTime"    column="insert_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVehicleInsuredVo">
+        select id, policy_id, license_no, license_type, vehicle_kind, vehicle_use_nature, vehicle_first_reg_date, displacement, approved_seat_count, vin, engine_no, gas_type, new_vehicle_price, vehicle_factory_name, industry_vehicle_code, power, vehicle_quality, version, img_urls, insert_time, update_time from t_vehicle_insured
+    </sql>
+
+    <select id="selectVehicleInsuredList" parameterType="VehicleInsured" resultMap="VehicleInsuredResult">
+        <include refid="selectVehicleInsuredVo"/>
+        <where>  
+            <if test="policyId != null "> and policy_id = #{policyId}</if>
+            <if test="licenseNo != null  and licenseNo != ''"> and license_no = #{licenseNo}</if>
+            <if test="licenseType != null  and licenseType != ''"> and license_type = #{licenseType}</if>
+            <if test="vehicleKind != null  and vehicleKind != ''"> and vehicle_kind = #{vehicleKind}</if>
+            <if test="vehicleUseNature != null  and vehicleUseNature != ''"> and vehicle_use_nature = #{vehicleUseNature}</if>
+            <if test="vehicleFirstRegDate != null "> and vehicle_first_reg_date = #{vehicleFirstRegDate}</if>
+            <if test="displacement != null "> and displacement = #{displacement}</if>
+            <if test="approvedSeatCount != null "> and approved_seat_count = #{approvedSeatCount}</if>
+            <if test="vin != null  and vin != ''"> and vin = #{vin}</if>
+            <if test="engineNo != null  and engineNo != ''"> and engine_no = #{engineNo}</if>
+            <if test="gasType != null  and gasType != ''"> and gas_type = #{gasType}</if>
+            <if test="newVehiclePrice != null "> and new_vehicle_price = #{newVehiclePrice}</if>
+            <if test="vehicleFactoryName != null  and vehicleFactoryName != ''"> and vehicle_factory_name like concat('%', #{vehicleFactoryName}, '%')</if>
+            <if test="industryVehicleCode != null  and industryVehicleCode != ''"> and industry_vehicle_code = #{industryVehicleCode}</if>
+            <if test="power != null "> and power = #{power}</if>
+            <if test="vehicleQuality != null "> and vehicle_quality = #{vehicleQuality}</if>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="imgUrls != null  and imgUrls != ''"> and img_urls = #{imgUrls}</if>
+            <if test="insertTime != null "> and insert_time = #{insertTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectVehicleInsuredById" parameterType="Long" resultMap="VehicleInsuredResult">
+        <include refid="selectVehicleInsuredVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVehicleInsured" parameterType="VehicleInsured" useGeneratedKeys="true" keyProperty="id">
+        insert into t_vehicle_insured
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="policyId != null">policy_id,</if>
+            <if test="licenseNo != null">license_no,</if>
+            <if test="licenseType != null">license_type,</if>
+            <if test="vehicleKind != null">vehicle_kind,</if>
+            <if test="vehicleUseNature != null">vehicle_use_nature,</if>
+            <if test="vehicleFirstRegDate != null">vehicle_first_reg_date,</if>
+            <if test="displacement != null">displacement,</if>
+            <if test="approvedSeatCount != null">approved_seat_count,</if>
+            <if test="vin != null">vin,</if>
+            <if test="engineNo != null">engine_no,</if>
+            <if test="gasType != null">gas_type,</if>
+            <if test="newVehiclePrice != null">new_vehicle_price,</if>
+            <if test="vehicleFactoryName != null">vehicle_factory_name,</if>
+            <if test="industryVehicleCode != null">industry_vehicle_code,</if>
+            <if test="power != null">power,</if>
+            <if test="vehicleQuality != null">vehicle_quality,</if>
+            <if test="version != null">version,</if>
+            <if test="imgUrls != null">img_urls,</if>
+            <if test="insertTime != null">insert_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="policyId != null">#{policyId},</if>
+            <if test="licenseNo != null">#{licenseNo},</if>
+            <if test="licenseType != null">#{licenseType},</if>
+            <if test="vehicleKind != null">#{vehicleKind},</if>
+            <if test="vehicleUseNature != null">#{vehicleUseNature},</if>
+            <if test="vehicleFirstRegDate != null">#{vehicleFirstRegDate},</if>
+            <if test="displacement != null">#{displacement},</if>
+            <if test="approvedSeatCount != null">#{approvedSeatCount},</if>
+            <if test="vin != null">#{vin},</if>
+            <if test="engineNo != null">#{engineNo},</if>
+            <if test="gasType != null">#{gasType},</if>
+            <if test="newVehiclePrice != null">#{newVehiclePrice},</if>
+            <if test="vehicleFactoryName != null">#{vehicleFactoryName},</if>
+            <if test="industryVehicleCode != null">#{industryVehicleCode},</if>
+            <if test="power != null">#{power},</if>
+            <if test="vehicleQuality != null">#{vehicleQuality},</if>
+            <if test="version != null">#{version},</if>
+            <if test="imgUrls != null">#{imgUrls},</if>
+            <if test="insertTime != null">#{insertTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVehicleInsured" parameterType="VehicleInsured">
+        update t_vehicle_insured
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="policyId != null">policy_id = #{policyId},</if>
+            <if test="licenseNo != null">license_no = #{licenseNo},</if>
+            <if test="licenseType != null">license_type = #{licenseType},</if>
+            <if test="vehicleKind != null">vehicle_kind = #{vehicleKind},</if>
+            <if test="vehicleUseNature != null">vehicle_use_nature = #{vehicleUseNature},</if>
+            <if test="vehicleFirstRegDate != null">vehicle_first_reg_date = #{vehicleFirstRegDate},</if>
+            <if test="displacement != null">displacement = #{displacement},</if>
+            <if test="approvedSeatCount != null">approved_seat_count = #{approvedSeatCount},</if>
+            <if test="vin != null">vin = #{vin},</if>
+            <if test="engineNo != null">engine_no = #{engineNo},</if>
+            <if test="gasType != null">gas_type = #{gasType},</if>
+            <if test="newVehiclePrice != null">new_vehicle_price = #{newVehiclePrice},</if>
+            <if test="vehicleFactoryName != null">vehicle_factory_name = #{vehicleFactoryName},</if>
+            <if test="industryVehicleCode != null">industry_vehicle_code = #{industryVehicleCode},</if>
+            <if test="power != null">power = #{power},</if>
+            <if test="vehicleQuality != null">vehicle_quality = #{vehicleQuality},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="imgUrls != null">img_urls = #{imgUrls},</if>
+            <if test="insertTime != null">insert_time = #{insertTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVehicleInsuredById" parameterType="Long">
+        delete from t_vehicle_insured where id = #{id}
+    </delete>
+
+    <delete id="deleteVehicleInsuredByIds" parameterType="String">
+        delete from t_vehicle_insured where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
