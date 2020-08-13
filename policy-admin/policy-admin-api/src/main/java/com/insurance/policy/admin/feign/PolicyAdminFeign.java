@@ -39,7 +39,7 @@ public interface PolicyAdminFeign {
     /**
      * @Author 潘升 
      * @Description //TODO 缴费接口
-     * @Date 12:32 2020/8/13
+     * @Date 14:03 2020/8/13
      * @Param [] 
      * @since 1.0.0
      * @return void
