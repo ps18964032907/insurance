@@ -21,15 +21,13 @@ public class MessageCenterController {
     private RabbitTemplate rabbitTemplate;
 
     @RequestMapping("/SendToFinance/{id}")
-    public long sendFinanceMessage(@PathVariable("id")long id){
+    public void sendFinanceMessage(@PathVariable("id")long id){
         rabbitTemplate.convertAndSend(FINANCE_EXCHANGE,FINANCE_ROUTING_KEY,id);
         System.out.println("已经发送财务微服务");
-        return id;
     }
     @RequestMapping("/SendToPolicyMain/{id}")
-    public long sendPolicyMainMessage(@PathVariable("id")long id){
+    public void sendPolicyMainMessage(@PathVariable("id")long id){
         rabbitTemplate.convertAndSend(POLICY_MAIN_EXCHANGE,POLICY_MAIN_ROUTING_KEY,id);
         System.out.println("已经发送保单微服务");
-        return id;
     }
 }
