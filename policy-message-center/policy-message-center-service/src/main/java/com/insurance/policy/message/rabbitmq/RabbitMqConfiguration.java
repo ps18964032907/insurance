@@ -13,21 +13,21 @@ import java.util.Map;
 
 @Configuration
 public class RabbitMqConfiguration {
-    private static final String FINANCE_QUEUE="finance_queue";
-    private static final String POLICY_MAIN_QUEUE="policy_main_queue";
-    private static final String FINANCE_DEAD_LETTER_QUEUE="finance_dead_letter_queue";
-    private static final String POLICY_MAIN_DEAD_LETTER_QUEUE="policy_main_dead_letter_queue";
-    private static final String FINANCE_DEAD_LETTER_EXCHANGE="finance_dead_letter_exchange";
-    private static final String POLICY_MAIN_DEAD_LETTER_EXCHANGE="policy_main_dead_letter_exchange";
+    private String FINANCE_QUEUE="finance_queue";
+    private String POLICY_MAIN_QUEUE="policy_main_queue";
+    private String FINANCE_DEAD_LETTER_QUEUE="finance_dead_letter_queue";
+    private String POLICY_MAIN_DEAD_LETTER_QUEUE="policy_main_dead_letter_queue";
+    private String FINANCE_DEAD_LETTER_EXCHANGE="finance_dead_letter_exchange";
+    private String POLICY_MAIN_DEAD_LETTER_EXCHANGE="policy_main_dead_letter_exchange";
 
 
-    private static final String FINANCE_EXCHANGE="finance_exchange";
-    private static final String POLICY_MAIN_EXCHANGE="policy_main_exchange";
-    public static final String FINANCE_ROUTING_KEY="finance_routing_key";
-    public static final String POLICY_MAIN_ROUTING_KEY="policy_main_routing_key";
+    private String FINANCE_EXCHANGE="finance_exchange";
+    private String POLICY_MAIN_EXCHANGE="policy_main_exchange";
+    public String FINANCE_ROUTING_KEY="finance_routing_key";
+    public String POLICY_MAIN_ROUTING_KEY="policy_main_routing_key";
 
-    public static final String FINANCE_DEAD_LETTER_ROUTING_KEY="finance_dead_letter_routing_key";
-    public static final String POLICY_MAIN_DEAD_LETTER_ROUTING_KEY="policy_main_dead_letter_routing_key";
+    public String FINANCE_DEAD_LETTER_ROUTING_KEY="finance_dead_letter_routing_key";
+    public String POLICY_MAIN_DEAD_LETTER_ROUTING_KEY="policy_main_dead_letter_routing_key";
 
 
     //定义一个dead letter Queue的对象，并给队列一个名字：policy_message_center_dead_letter_queue
