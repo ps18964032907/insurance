@@ -2,6 +2,7 @@ package com.insurance.policy.admin.mapper;
 
 import java.util.List;
 import com.insurance.policy.admin.domain.VehicleCustomer;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -61,5 +62,5 @@ public interface VehicleCustomerMapper
      */
     public int deleteVehicleCustomerByIds(Long[] ids);
 
-    int insertVehicleCustomers(List<VehicleCustomer> compulsoryVehicleCustomerInfos);
+    int insertVehicleCustomers(@Param("compulsoryVehicleCustomerInfos") List<VehicleCustomer> compulsoryVehicleCustomerInfos);
 }

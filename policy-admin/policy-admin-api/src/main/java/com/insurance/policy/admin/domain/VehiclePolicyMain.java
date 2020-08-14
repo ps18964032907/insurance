@@ -3,10 +3,16 @@ package com.insurance.policy.admin.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.insurance.policy.admin.util.VehiclePolicyMainAnnotation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.core.annotation.Excel;
 import com.ruoyi.common.core.web.domain.BaseEntity;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 
 /**
  * 保单主要信息对象 t_vehicle_policy_main
@@ -14,6 +20,8 @@ import com.ruoyi.common.core.web.domain.BaseEntity;
  * @author ruoyi
  * @date 2020-08-12
  */
+@Validated
+@VehiclePolicyMainAnnotation
 public class VehiclePolicyMain extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -48,6 +56,7 @@ public class VehiclePolicyMain extends BaseEntity
 
     /** 保单生效日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @Future
     @Excel(name = "保单生效日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date effectiveDate;
 
@@ -70,10 +79,12 @@ public class VehiclePolicyMain extends BaseEntity
 
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @Past(message="创建时间必须大于当前时间")
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date insertTime;
 
     /** 是否是交强险：0-商业险 1-交强险 */
+
     @Excel(name = "是否是交强险：0-商业险 1-交强险")
     private String compulsory;
 

@@ -58,4 +58,6 @@ public interface VehiclePolicyMainMapper
      * @return 结果
      */
     public int deleteVehiclePolicyMainByIds(Long[] ids);
+
+    List<VehiclePolicyMain> queryUnderwriting();
 }

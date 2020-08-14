@@ -168,8 +168,8 @@
 
     <el-table v-loading="loading" :data="policyList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <!-- <el-table-column label="自增主键" align="center" prop="id" /> -->
-      <!-- <el-table-column label="保单/投保单号" align="center" prop="policyNo" /> -->
+      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="保单号" align="center" prop="policyNo" />
       <!-- <el-table-column label="关联的保单/投保单主键" align="center" prop="associatedPolicyId" /> -->
       <!-- <el-table-column label="归属经办人id" align="center" prop="belongToHanderId" /> -->
       <!-- <el-table-column label="归属机构id" align="center" prop="belongToOrgId" /> -->
@@ -195,6 +195,7 @@
       </el-table-column> -->
       <!-- <el-table-column label="是否是交强险：0-商业险 1-交强险" align="center" prop="compulsoryPolicy" /> -->
       <!-- <el-table-column label="电子保单文件地址" align="center" prop="epolicyUrl" /> -->
+      <!--
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -202,8 +203,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['policy:policy:edit']"
-          >修改</el-button>
+          >提交核保</el-button>
           <el-button
             size="mini"
             type="text"
@@ -212,7 +212,7 @@
             v-hasPermi="['policy:policy:remove']"
           >删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
     <pagination
@@ -1583,14 +1583,15 @@ export default {
       this.policyDetailDialogVisible = true;
 
     },
-    /** 修改按钮操作 */
+    /** 提交核保 */
     handleUpdate(row) {
-      this.reset();
       const id = row.id || this.ids
-      getPolicy(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改保单主要信息";
+      updatePolicy(id).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess("提交成功");
+              this.open = false;
+              this.getList();
+            }
       });
     },
     /** 提交按钮 */

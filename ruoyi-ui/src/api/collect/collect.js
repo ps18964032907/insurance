@@ -12,8 +12,7 @@ export function listCollect() {
 //收费
 export function doCollect(data) {
   return request({
-    url: '/combined/combined/collect',
-    method: 'post',
-    data: data
+    url: '/combined/combined/collect?id='+data,
+    method: 'post'
   })
 }

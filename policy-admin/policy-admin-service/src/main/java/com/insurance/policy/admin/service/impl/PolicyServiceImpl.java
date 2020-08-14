@@ -1,8 +1,11 @@
 package com.insurance.policy.admin.service.impl;
 
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.insurance.policy.admin.domain.*;
 import com.insurance.policy.admin.mapper.*;
 import com.insurance.policy.admin.service.PolicyService;
+import com.insurance.policy.premium.feign.PolicyPremiumFeign;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +14,8 @@ import java.util.List;
 
 @Service
 public class PolicyServiceImpl implements PolicyService {
+    @Autowired
+    PolicyPremiumFeign policyPremiumFeign;
 
     @Autowired
     private VehicleCoverageMapper vehicleCoverageMapper;
@@ -30,14 +35,23 @@ public class PolicyServiceImpl implements PolicyService {
     @Autowired
     private VehiclePremCalSubMapper vehiclePremCalSubMapper;
 
+
+    private static Snowflake snowflake = IdUtil.getSnowflake(1, 1);
+
+
+    public static void main(String[] args) {
+        System.out.println("CCL" + snowflake.nextIdStr());
+        System.out.println("CPL" + snowflake.nextIdStr());
+    }
+
     /**
      * 根据保单的id查询出两个保单的所有信息
+     *
      * @param id
      * @return
      */
     @Override
     public ComBinedPolicy getCombinedPolicy(Long id) {
-
 
 
         //创建保单对象
@@ -61,10 +75,10 @@ public class PolicyServiceImpl implements PolicyService {
 
 
         //如果是交强险
-        if("1".equals(vehiclePolicyMain.getCompulsory())){
-            flag="1";
-        }else{
-            flag="0";
+        if ("1".equals(vehiclePolicyMain.getCompulsory())) {
+            flag = "1";
+        } else {
+            flag = "0";
         }
 
 
@@ -117,9 +131,9 @@ public class PolicyServiceImpl implements PolicyService {
         VehicleTax vehicleTax = new VehicleTax();
 
         //如果是交强险
-        if("1".equals(flag)){
+        if ("1".equals(flag)) {
             vehicleTax.setPolicyId(id);
-        }else{
+        } else {
             vehicleTax.setPolicyId(associatedPolicyId);
         }
 
@@ -127,7 +141,7 @@ public class PolicyServiceImpl implements PolicyService {
         VehicleTax vehicleTax1 = vehicleTaxes.get(0);
 
 
-        if("1".equals(flag)){
+        if ("1".equals(flag)) {
             //交强险
             compulsoryPolicy.setVehicleCoverages(vehicleCoverages);
             compulsoryPolicy.setVehicleCustomers(vehicleCustomers);
@@ -143,7 +157,7 @@ public class PolicyServiceImpl implements PolicyService {
             commercialPolicy.setVehiclePolicyMain(associatedVehiclePolicyMain);
             commercialPolicy.setVehiclePremCalSub(associatedVehiclePremCalSub);
 
-        }else{
+        } else {
             //商业险
             commercialPolicy.setVehicleCoverages(vehicleCoverages);
             commercialPolicy.setVehicleCustomers(vehicleCustomers);
@@ -170,6 +184,7 @@ public class PolicyServiceImpl implements PolicyService {
 
     /**
      * 查询保单列表
+     *
      * @return
      */
     @Override
@@ -186,21 +201,84 @@ public class PolicyServiceImpl implements PolicyService {
 
     /**
      * 保存保单数据
+     *
      * @param combinedPolicy
      * @return
      */
     @Override
     public int create(ComBinedPolicy combinedPolicy) {
-        return 0;
+
+        /*校验*/
+
+//        ComBinedPolicy comBinedPolicy1 = policyPremiumFeign.calculatePolicy(combinedPolicy);
+        /*商业险*/
+        CommercialPolicy commercialPolicy = combinedPolicy.getCommercialPolicy();
+        /*交强险*/
+        CompulsoryPolicy compulsoryPolicy = combinedPolicy.getCompulsoryPolicy();
+
+
+        /*保险主要信息*/
+        VehiclePolicyMain commercialVehiclePolicyMainInfo = commercialPolicy.getVehiclePolicyMain();
+        //设置为已报价
+        commercialVehiclePolicyMainInfo.setPolicyStatus("2");
+        commercialVehiclePolicyMainInfo.setPolicyNo("CCL" + snowflake.nextIdStr());
+
+        /*保存保险主要信息*/
+        vehiclePolicyMainMapper.insertVehiclePolicyMain(commercialVehiclePolicyMainInfo);
+        /*商业险客户信息*/
+        List<VehicleCustomer> commercialVehicleCustomerInfos = commercialPolicy.getVehicleCustomers();
+        commercialVehicleCustomerInfos.forEach(vehicleCustomer -> vehicleCustomer.setPolicyId(commercialVehiclePolicyMainInfo.getId()));
+
+        /*添加商业险客户信息*/
+        vehicleCustomerMapper.insertVehicleCustomers(commercialVehicleCustomerInfos);
+        /*车辆信息*/
+        VehicleInsured commercialVehicleInsured = commercialPolicy.getVehicleInsured();
+        commercialVehicleInsured.setPolicyId(commercialVehiclePolicyMainInfo.getId());
+        /*保存车辆信息*/
+        vehicleInsuredMapper.insertVehicleInsured(commercialVehicleInsured);
+
+//        vehicleCoverageMapper.insertVehicleCoverage()
+
+
+
+
+        /*保险主要信息*/
+        VehiclePolicyMain compulsoryVehiclePolicyMainInfo = compulsoryPolicy.getVehiclePolicyMain();
+        //设置为已报价
+        compulsoryVehiclePolicyMainInfo.setPolicyStatus("2");
+        //设置来源
+        compulsoryVehiclePolicyMainInfo.setBusinessSourceCode(commercialVehiclePolicyMainInfo.getBusinessSourceCode());
+        //设置编号
+        compulsoryVehiclePolicyMainInfo.setPolicyNo("CPL" + snowflake.nextIdStr());
+
+        /*保存保险主要信息*/
+        vehiclePolicyMainMapper.insertVehiclePolicyMain(compulsoryVehiclePolicyMainInfo);
+        /*交强险客户信息*/
+        List<VehicleCustomer> compulsoryVehicleCustomerInfos = compulsoryPolicy.getVehicleCustomers();
+        compulsoryVehicleCustomerInfos.forEach(vehicleCustomer -> vehicleCustomer.setPolicyId(compulsoryVehiclePolicyMainInfo.getId()));
+
+        /*添加交强险客户信息*/
+        vehicleCustomerMapper.insertVehicleCustomers(compulsoryVehicleCustomerInfos);
+        /*车辆信息*/
+        VehicleInsured compulsoryVehicleInsured = compulsoryPolicy.getVehicleInsured();
+        compulsoryVehicleInsured.setPolicyId(compulsoryVehiclePolicyMainInfo.getId());
+
+        /*保存车辆信息*/
+        vehicleInsuredMapper.insertVehicleInsured(compulsoryVehicleInsured);
+
+
+        return 1;
     }
 
     /**
      * 核保
+     *
      * @param id
      * @return
      */
     @Override
     public int underwriting(Long id) {
+
 
         //这里只是传入了一个id,根据这个id,从t_vehicle_policy_main表找到policy对象，找到关联的另外一个policy对象以后，在进行以后的步骤
         return 0;
@@ -208,6 +286,7 @@ public class PolicyServiceImpl implements PolicyService {
 
     /**
      * 根据一个保单id给两个保单收费
+     *
      * @param id
      * @return
      */
@@ -219,15 +298,19 @@ public class PolicyServiceImpl implements PolicyService {
 
     /**
      * 查询待核保的保单列表
+     *
      * @return
      */
     @Override
     public List<VehiclePolicyMain> queryUnderwriting() {
-        return null;
+
+
+        return vehiclePolicyMainMapper.queryUnderwriting();
     }
 
     /**
      * 查询待收费的保单列表
+     *
      * @return
      */
     @Override

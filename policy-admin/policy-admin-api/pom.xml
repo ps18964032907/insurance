@@ -11,5 +11,11 @@
 
     <artifactId>policy-admin-api</artifactId>
 
+    <dependencies>
 
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-common-core</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -12,8 +12,7 @@ export function listUnderwriting() {
 //收费
 export function doUnderwriting(data) {
   return request({
-    url: '/combined/combined/underwriting',
-    method: 'post',
-    data: data
+    url: '/combined/combined/underwriting?id='+data,
+    method: 'post'
   })
 }

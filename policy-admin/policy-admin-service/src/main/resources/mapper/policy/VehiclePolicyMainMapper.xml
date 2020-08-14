@@ -51,7 +51,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectVehiclePolicyMainVo"/>
         where id = #{id}
     </select>
-        
+    <select id="queryUnderwriting" resultMap="VehiclePolicyMainResult">
+        <include refid="selectVehiclePolicyMainVo"/>
+        where policyStatus = 2
+    </select>
+
     <insert id="insertVehiclePolicyMain" parameterType="VehiclePolicyMain" useGeneratedKeys="true" keyProperty="id">
         insert into t_vehicle_policy_main
         <trim prefix="(" suffix=")" suffixOverrides=",">

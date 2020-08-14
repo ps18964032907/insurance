@@ -19,13 +19,13 @@ export function getPolicy(id) {
 // 新增保单主要信息
 export function addPolicy(data) {
   return request({
-    url: '/combined/policy',
+    url: '/combined/combined/policy',
     method: 'post',
     data: data
   })
 }
 
-// 修改保单主要信息
+// 提交核保
 export function updatePolicy(data) {
   return request({
     url: '/combined/policy',
