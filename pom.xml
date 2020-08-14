@@ -217,6 +217,7 @@
         <module>policy-admin</module>
         <module>policy-pay</module>
         <module>policy-message-center</module>
+        <module>policy-third-party</module>
     </modules>
     <packaging>pom</packaging>
 
