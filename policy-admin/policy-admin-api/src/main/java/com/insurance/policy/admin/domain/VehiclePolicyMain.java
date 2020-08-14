@@ -18,6 +18,7 @@ public class VehiclePolicyMain extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
+
     /** 自增主键 */
     private Long id;
 
@@ -74,7 +75,7 @@ public class VehiclePolicyMain extends BaseEntity
 
     /** 是否是交强险：0-商业险 1-交强险 */
     @Excel(name = "是否是交强险：0-商业险 1-交强险")
-    private String compulsoryPolicy;
+    private String compulsory;
 
     /** 电子保单文件地址 */
     @Excel(name = "电子保单文件地址")
@@ -197,14 +198,14 @@ public class VehiclePolicyMain extends BaseEntity
     {
         return insertTime;
     }
-    public void setCompulsoryPolicy(String compulsoryPolicy) 
+    public void setCompulsory(String compulsory)
     {
-        this.compulsoryPolicy = compulsoryPolicy;
+        this.compulsory = compulsory;
     }
 
-    public String getCompulsoryPolicy() 
+    public String getCompulsory()
     {
-        return compulsoryPolicy;
+        return compulsory;
     }
     public void setEpolicyUrl(String epolicyUrl) 
     {
@@ -233,7 +234,7 @@ public class VehiclePolicyMain extends BaseEntity
             .append("version", getVersion())
             .append("insertTime", getInsertTime())
             .append("updateTime", getUpdateTime())
-            .append("compulsoryPolicy", getCompulsoryPolicy())
+            .append("compulsoryPolicy", getCompulsory())
             .append("epolicyUrl", getEpolicyUrl())
             .toString();
     }

@@ -1,5 +1,6 @@
 package com.insurance.policy.admin.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +35,7 @@ public class VehiclePolicyMainController extends BaseController
 {
     @Autowired
     private IVehiclePolicyMainService vehiclePolicyMainService;
+
 
     /**
      * 查询保单主要信息列表

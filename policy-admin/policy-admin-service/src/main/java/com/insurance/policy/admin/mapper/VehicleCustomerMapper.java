@@ -2,6 +2,7 @@ package com.insurance.policy.admin.mapper;
 
 import java.util.List;
 import com.insurance.policy.admin.domain.VehicleCustomer;
+import org.springframework.stereotype.Repository;
 
 /**
  * 投保单客户信息（投保人，被保人，车主）Mapper接口
@@ -9,6 +10,7 @@ import com.insurance.policy.admin.domain.VehicleCustomer;
  * @author ruoyi
  * @date 2020-08-12
  */
+@Repository
 public interface VehicleCustomerMapper 
 {
     /**
@@ -58,4 +60,6 @@ public interface VehicleCustomerMapper
      * @return 结果
      */
     public int deleteVehicleCustomerByIds(Long[] ids);
+
+    int insertVehicleCustomers(List<VehicleCustomer> compulsoryVehicleCustomerInfos);
 }

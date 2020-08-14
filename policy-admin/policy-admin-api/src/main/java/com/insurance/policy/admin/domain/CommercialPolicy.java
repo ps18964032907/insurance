@@ -1,28 +1,31 @@
 package com.insurance.policy.admin.domain;
 
+import lombok.Data;
+
 import javax.validation.Valid;
 import java.util.List;
 
 /**
  * 商业险对象
  */
+@Data
 public class CommercialPolicy {
     //保单主要信息
-    @Valid
+//    @Valid
     private VehiclePolicyMain vehiclePolicyMain;
     //险别信息
-    @Valid
+//    @Valid
     private List<VehicleCoverage> vehicleCoverages;
 
     //保费计算辅助信息
-    @Valid
+//    @Valid
     private VehiclePremCalSub vehiclePremCalSub;
 
     //客户信息
-    @Valid
+//    @Valid
     private List<VehicleCustomer> vehicleCustomers;
 
     //被保险车辆信息
-    @Valid
+//    @Valid
     private VehicleInsured vehicleInsured;
 }

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.insurance.policy.admin.mapper.VehicleCustomerMapper">
-    
+
     <resultMap type="VehicleCustomer" id="VehicleCustomerResult">
-        <result property="id"    column="id"    />
-        <result property="policyId"    column="policy_id"    />
-        <result property="idNo"    column="id_no"    />
-        <result property="idType"    column="id_type"    />
-        <result property="userName"    column="user_name"    />
-        <result property="userRoleType"    column="user_role_type"    />
-        <result property="cellphone"    column="cellphone"    />
-        <result property="address"    column="address"    />
-        <result property="customerType"    column="customer_type"    />
-        <result property="email"    column="email"    />
-        <result property="version"    column="version"    />
-        <result property="insertTime"    column="insert_time"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="gender"    column="gender"    />
-        <result property="relation"    column="relation"    />
+        <result property="id" column="id"/>
+        <result property="policyId" column="policy_id"/>
+        <result property="idNo" column="id_no"/>
+        <result property="idType" column="id_type"/>
+        <result property="userName" column="user_name"/>
+        <result property="userRoleType" column="user_role_type"/>
+        <result property="cellphone" column="cellphone"/>
+        <result property="address" column="address"/>
+        <result property="customerType" column="customer_type"/>
+        <result property="email" column="email"/>
+        <result property="version" column="version"/>
+        <result property="insertTime" column="insert_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="gender" column="gender"/>
+        <result property="relation" column="relation"/>
     </resultMap>
 
     <sql id="selectVehicleCustomerVo">
@@ -28,28 +28,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectVehicleCustomerList" parameterType="VehicleCustomer" resultMap="VehicleCustomerResult">
         <include refid="selectVehicleCustomerVo"/>
-        <where>  
-            <if test="policyId != null "> and policy_id = #{policyId}</if>
-            <if test="idNo != null  and idNo != ''"> and id_no = #{idNo}</if>
-            <if test="idType != null  and idType != ''"> and id_type = #{idType}</if>
-            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
-            <if test="userRoleType != null  and userRoleType != ''"> and user_role_type = #{userRoleType}</if>
-            <if test="cellphone != null  and cellphone != ''"> and cellphone = #{cellphone}</if>
-            <if test="address != null  and address != ''"> and address = #{address}</if>
-            <if test="customerType != null  and customerType != ''"> and customer_type = #{customerType}</if>
-            <if test="email != null  and email != ''"> and email = #{email}</if>
-            <if test="version != null "> and version = #{version}</if>
-            <if test="insertTime != null "> and insert_time = #{insertTime}</if>
-            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
-            <if test="relation != null  and relation != ''"> and relation = #{relation}</if>
+        <where>
+            <if test="policyId != null ">and policy_id = #{policyId}</if>
+            <if test="idNo != null  and idNo != ''">and id_no = #{idNo}</if>
+            <if test="idType != null  and idType != ''">and id_type = #{idType}</if>
+            <if test="userName != null  and userName != ''">and user_name like concat('%', #{userName}, '%')</if>
+            <if test="userRoleType != null  and userRoleType != ''">and user_role_type = #{userRoleType}</if>
+            <if test="cellphone != null  and cellphone != ''">and cellphone = #{cellphone}</if>
+            <if test="address != null  and address != ''">and address = #{address}</if>
+            <if test="customerType != null  and customerType != ''">and customer_type = #{customerType}</if>
+            <if test="email != null  and email != ''">and email = #{email}</if>
+            <if test="version != null ">and version = #{version}</if>
+            <if test="insertTime != null ">and insert_time = #{insertTime}</if>
+            <if test="gender != null  and gender != ''">and gender = #{gender}</if>
+            <if test="relation != null  and relation != ''">and relation = #{relation}</if>
         </where>
     </select>
-    
+
     <select id="selectVehicleCustomerById" parameterType="Long" resultMap="VehicleCustomerResult">
         <include refid="selectVehicleCustomerVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertVehicleCustomer" parameterType="VehicleCustomer" useGeneratedKeys="true" keyProperty="id">
         insert into t_vehicle_customer
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="gender != null">gender,</if>
             <if test="relation != null">relation,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="policyId != null">#{policyId},</if>
             <if test="idNo != null">#{idNo},</if>
@@ -83,7 +83,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="gender != null">#{gender},</if>
             <if test="relation != null">#{relation},</if>
-         </trim>
+        </trim>
+    </insert>
+    <insert id="insertVehicleCustomers">
+        insert into t_vehicle_customer
+        policy_id,
+        id_no,
+        id_type,
+        user_name,
+        user_role_type,
+        cellphone,
+        address,
+        customer_type,
+        email,
+        version,
+        insert_time,
+        update_time,
+        gender
+        relation
+        values
+        <foreach collection="compulsoryVehicleCustomerInfos" item="c" separator=",">
+            (
+            #{c.policyId},
+            #{c.idNo},
+            #{c.idType},
+            #{c.userName},
+            #{c.userRoleType},
+            #{c.cellphone},
+            #{c.address},
+            #{c.customerType},
+            #{c.email},
+            #{c.version},
+            #{c.insertTime},
+            #{c.updateTime},
+            #{c.gender},
+            #{c.relation}
+            )
+        </foreach>
+
+
     </insert>
 
     <update id="updateVehicleCustomer" parameterType="VehicleCustomer">
@@ -112,10 +150,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteVehicleCustomerByIds" parameterType="String">
-        delete from t_vehicle_customer where id in 
+        delete from t_vehicle_customer where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    
+
 </mapper>

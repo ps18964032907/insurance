@@ -66,6 +66,7 @@ export default {
       content: this.value,
       uploadImgUrl: "",
       editorOption: {
+        placeholder: "",
         theme: "snow", // or 'bubble'
         placeholder: "请输入内容",
         modules: {
@@ -145,7 +146,6 @@ export default {
 
 <style>
 .editor {
-  white-space: pre-wrap!important;
   line-height: normal !important;
   height: 192px;
 }

@@ -19,12 +19,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="version"    column="version"    />
         <result property="insertTime"    column="insert_time"    />
         <result property="updateTime"    column="update_time"    />
-        <result property="compulsoryPolicy"    column="compulsory_policy"    />
+        <result property="compulsory"    column="compulsory"    />
         <result property="epolicyUrl"    column="epolicy_url"    />
     </resultMap>
 
     <sql id="selectVehiclePolicyMainVo">
-        select id, policy_no, associated_policy_id, belong_to_hander_id, belong_to_org_id, business_source_code, policy_status, effective_date, expiry_date, stand_premium, due_premium, version, insert_time, update_time, compulsory_policy, epolicy_url from t_vehicle_policy_main
+        select id, policy_no, associated_policy_id, belong_to_hander_id, belong_to_org_id, business_source_code, policy_status, effective_date, expiry_date, stand_premium, due_premium, version, insert_time, update_time, compulsory, epolicy_url from t_vehicle_policy_main
     </sql>
 
     <select id="selectVehiclePolicyMainList" parameterType="VehiclePolicyMain" resultMap="VehiclePolicyMainResult">
@@ -42,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="duePremium != null "> and due_premium = #{duePremium}</if>
             <if test="version != null "> and version = #{version}</if>
             <if test="insertTime != null "> and insert_time = #{insertTime}</if>
-            <if test="compulsoryPolicy != null  and compulsoryPolicy != ''"> and compulsory_policy = #{compulsoryPolicy}</if>
+            <if test="compulsory != null  and compulsory != ''"> and compulsory = #{compulsory}</if>
             <if test="epolicyUrl != null  and epolicyUrl != ''"> and epolicy_url = #{epolicyUrl}</if>
         </where>
     </select>
@@ -68,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="version != null">version,</if>
             <if test="insertTime != null">insert_time,</if>
             <if test="updateTime != null">update_time,</if>
-            <if test="compulsoryPolicy != null and compulsoryPolicy != ''">compulsory_policy,</if>
+            <if test="compulsory != null and compulsory != ''">compulsory,</if>
             <if test="epolicyUrl != null">epolicy_url,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -85,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="version != null">#{version},</if>
             <if test="insertTime != null">#{insertTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
-            <if test="compulsoryPolicy != null and compulsoryPolicy != ''">#{compulsoryPolicy},</if>
+            <if test="compulsory != null and compulsory != ''">#{compulsory},</if>
             <if test="epolicyUrl != null">#{epolicyUrl},</if>
          </trim>
     </insert>
@@ -106,7 +106,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="version != null">version = #{version},</if>
             <if test="insertTime != null">insert_time = #{insertTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="compulsoryPolicy != null and compulsoryPolicy != ''">compulsory_policy = #{compulsoryPolicy},</if>
+            <if test="compulsory != null and compulsory != ''">compulsory = #{compulsory},</if>
             <if test="epolicyUrl != null">epolicy_url = #{epolicyUrl},</if>
         </trim>
         where id = #{id}
