@@ -1,6 +1,7 @@
 package com.insurance.policy.message.controller;
 
 
+import com.insurance.policy.message.fegin.PolicyMessageCenterFegin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ public class MessageCenterController {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
 
     @RequestMapping("/SendToFinance/{id}")
     public void sendFinanceMessage(@PathVariable("id")long id){

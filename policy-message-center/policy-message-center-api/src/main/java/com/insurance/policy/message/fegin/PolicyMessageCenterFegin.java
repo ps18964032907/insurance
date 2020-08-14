@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @Author sjh
  * @creat 2020/8/14 10:19
  */
-@FeignClient("policy-message-center-service")
+@FeignClient(value = "policy-message-center-service",path = "/MessageCenter")
 public interface PolicyMessageCenterFegin {
-    @RequestMapping("/MessageCenter/SendToFinance/{id}")
-    void sendFinanceMessage(@PathVariable("id")long id);
+    @RequestMapping("/SendToFinance/{id}")
+    long sendFinanceMessage(@PathVariable("id")long id);
 
-    @RequestMapping("/MessageCenter/SendToPolicyMain/{id}")
-    void sendPolicyMainMessage(@PathVariable("id")long id);
+    @RequestMapping("/SendToPolicyMain/{id}")
+    long sendPolicyMainMessage(@PathVariable("id")long id);
 }
