@@ -1,8 +1,12 @@
 package com.insurance.policy.premium.controller;
 
 import com.insurance.policy.admin.domain.ComBinedPolicy;
+import com.insurance.policy.premium.service.CalculatedService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author mhd
@@ -14,8 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/premium")
 public class CalculatedController {
+    @Autowired
+    CalculatedService calculatedService;
     @RequestMapping("/calculatePolicy")
     public ComBinedPolicy calculatePolicy(ComBinedPolicy comBinedPolicy){
+        try {
+            return calculatedService.calculatedPremium(comBinedPolicy);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
             return null;
+        }
     }
 }
+
