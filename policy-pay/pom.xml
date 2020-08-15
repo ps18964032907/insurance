@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.10.58.ALL</version>
+        </dependency>
+        <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>policy-admin-api</artifactId>
             <version>2.1.0</version>
