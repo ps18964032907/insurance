@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @FeignClient(value = "policy-message-center-service",path = "/MessageCenter")
 public interface PolicyMessageCenterFegin {
-    @RequestMapping("/SendToFinance/{id}")
-    long sendFinanceMessage(@PathVariable("id")long id);
+    @RequestMapping("/SendToFinance")
+    long sendFinanceMessage(long id,String email);
 
-    @RequestMapping("/SendToPolicyMain/{id}")
-    long sendPolicyMainMessage(@PathVariable("id")long id);
+    @RequestMapping("/SendToPolicyMain")
+    long sendPolicyMainMessage(long id,String email);
 }

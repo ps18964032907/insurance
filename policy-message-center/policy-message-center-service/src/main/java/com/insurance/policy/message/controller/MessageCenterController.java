@@ -2,9 +2,13 @@ package com.insurance.policy.message.controller;
 
 
 import com.insurance.policy.message.fegin.PolicyMessageCenterFegin;
+import com.insurance.policy.message.mail.MailUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sun.applet.Main;
+
+import java.math.BigDecimal;
 
 /**
  * @Author sjh
@@ -20,16 +24,19 @@ public class MessageCenterController {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private MailUtil mailUtil;
 
-
-    @RequestMapping("/SendToFinance/{id}")
-    public void sendFinanceMessage(@PathVariable("id")long id){
+    @RequestMapping("/SendToFinance")
+    public void sendFinanceMessage(BigDecimal duePremium,long id, String email){
         rabbitTemplate.convertAndSend(FINANCE_EXCHANGE,FINANCE_ROUTING_KEY,id);
+        mailUtil.sendFinaceEmail(duePremium,id,email);
         System.out.println("已经发送财务微服务");
     }
-    @RequestMapping("/SendToPolicyMain/{id}")
-    public void sendPolicyMainMessage(@PathVariable("id")long id){
+    @RequestMapping("/SendToPolicyMain")
+    public void sendPolicyMainMessage(long id,String email){
         rabbitTemplate.convertAndSend(POLICY_MAIN_EXCHANGE,POLICY_MAIN_ROUTING_KEY,id);
+        mailUtil.sendPolicyEmail(id,email);
         System.out.println("已经发送保单微服务");
     }
 }
