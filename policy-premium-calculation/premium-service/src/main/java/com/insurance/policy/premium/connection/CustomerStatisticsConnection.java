@@ -14,7 +14,7 @@ public class CustomerStatisticsConnection implements Callable<BigDecimal> {
 
     private VehicleCustomer vehicleCustomer;
 
-    private CustomerStatApi customerStatApi= (CustomerStatApi) SpringUtil.getBean("CustomerStatApi");
+    private CustomerStatApi customerStatApi= (CustomerStatApi) SpringUtil.getBean(CustomerStatApi.class);
 
     public CustomerStatisticsConnection(VehicleCustomer vehicleCustomer) {
         this.vehicleCustomer = vehicleCustomer;

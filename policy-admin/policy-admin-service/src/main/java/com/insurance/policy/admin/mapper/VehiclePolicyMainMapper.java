@@ -53,11 +53,14 @@ public interface VehiclePolicyMainMapper
 
     /**
      * 批量删除保单主要信息
-     * 
      * @param ids 需要删除的数据ID
      * @return 结果
      */
     public int deleteVehiclePolicyMainByIds(Long[] ids);
 
     List<VehiclePolicyMain> queryUnderwriting();
+
+    int underwritingUpdate(Long id);
+
+    List<VehiclePolicyMain> queryCollect();
 }

@@ -3,7 +3,6 @@ package com.insurance.policy.admin.controller;
 import com.insurance.policy.admin.domain.ComBinedPolicy;
 import com.insurance.policy.admin.domain.CommercialPolicy;
 import com.insurance.policy.admin.service.impl.PolicyAdminService;
-import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

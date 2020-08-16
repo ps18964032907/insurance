@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
  */
 public class VehicleTaxPlatformConnection implements Callable<VehicleTax> {
     private VehicleInsured vehicleInsured;
-    private VehicleTaxApi vehicleTaxApi = (VehicleTaxApi) SpringUtil.getBean("VehicleTaxApi");
+    private VehicleTaxApi vehicleTaxApi = (VehicleTaxApi) SpringUtil.getBean(VehicleTaxApi.class);
 
     public VehicleTaxPlatformConnection(VehicleInsured vehicleInsured) {
         this.vehicleInsured = vehicleInsured;

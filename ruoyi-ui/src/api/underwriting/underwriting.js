@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 显示待收费保单
 export function listUnderwriting() {
   return request({
-    url: '/combined/combined/collect/list',
+    url: '/combined/combined/underwriting/list',
     method: 'get'
   })
 }

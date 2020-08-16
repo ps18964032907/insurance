@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 
 public class IndustryPlatformConnectionForCPP implements Callable<VehiclePremCalSub> {
     private CompulsoryPolicy compulsoryPolicy;
-    private InsurancePlatformApi insurancePlatformApi= (InsurancePlatformApi) SpringUtil.getBean("InsurancePlatformApi");
+    private InsurancePlatformApi insurancePlatformApi= (InsurancePlatformApi) SpringUtil.getBean(InsurancePlatformApi.class);
 
 
     public IndustryPlatformConnectionForCPP(CompulsoryPolicy compulsoryPolicy) {

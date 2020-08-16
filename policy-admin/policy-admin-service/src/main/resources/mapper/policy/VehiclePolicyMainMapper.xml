@@ -53,7 +53,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="queryUnderwriting" resultMap="VehiclePolicyMainResult">
         <include refid="selectVehiclePolicyMainVo"/>
-        where policyStatus = 2
+        where policy_status = 2
+    </select>
+    <select id="queryCollect" resultMap="VehiclePolicyMainResult">
+        <include refid="selectVehiclePolicyMainVo"/>
+        where policy_status = 3
     </select>
 
     <insert id="insertVehiclePolicyMain" parameterType="VehiclePolicyMain" useGeneratedKeys="true" keyProperty="id">
@@ -114,6 +118,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="epolicyUrl != null">epolicy_url = #{epolicyUrl},</if>
         </trim>
         where id = #{id}
+    </update>
+    <update id="underwritingUpdate">
+         update t_vehicle_policy_main set policy_status = 3 where id = #{id} or associated_policy_id = #{id}
     </update>
 
     <delete id="deleteVehiclePolicyMainById" parameterType="Long">

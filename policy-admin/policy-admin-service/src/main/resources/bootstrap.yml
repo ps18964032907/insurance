@@ -1,7 +1,12 @@
 # Tomcat
 server:
   port: 20000
-
+feign:
+  compression:
+    request:
+      enabled: false
+    response:
+      enabled: false
 # Spring
 spring:
   application:

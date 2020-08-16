@@ -9,6 +9,7 @@ import com.insurance.policy.premium.feign.PolicyPremiumFeign;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,19 +203,28 @@ public class PolicyServiceImpl implements PolicyService {
     /**
      * 保存保单数据
      *
-     * @param combinedPolicy
+     * @param combinedPolicy1
      * @return
      */
     @Override
-    public int create(ComBinedPolicy combinedPolicy) {
+    public int create(ComBinedPolicy combinedPolicy1) {
 
-        /*校验*/
 
-//        ComBinedPolicy comBinedPolicy1 = policyPremiumFeign.calculatePolicy(combinedPolicy);
+        ComBinedPolicy combinedPolicy = policyPremiumFeign.calculatePolicy(combinedPolicy1);
         /*商业险*/
         CommercialPolicy commercialPolicy = combinedPolicy.getCommercialPolicy();
         /*交强险*/
         CompulsoryPolicy compulsoryPolicy = combinedPolicy.getCompulsoryPolicy();
+
+
+/*        //险别信息
+//    @Valid
+        private List<VehicleCoverage> vehicleCoverages;
+
+        //保费计算辅助信息
+//    @Valid
+        private VehiclePremCalSub vehiclePremCalSub;*/
+
 
 
         /*保险主要信息*/
@@ -228,6 +238,19 @@ public class PolicyServiceImpl implements PolicyService {
         /*商业险客户信息*/
         List<VehicleCustomer> commercialVehicleCustomerInfos = commercialPolicy.getVehicleCustomers();
         commercialVehicleCustomerInfos.forEach(vehicleCustomer -> vehicleCustomer.setPolicyId(commercialVehiclePolicyMainInfo.getId()));
+
+        List<VehicleCoverage> vehicleCoverages = commercialPolicy.getVehicleCoverages();
+
+        //添加险种责任信息对象
+        for (VehicleCoverage vehicleCoverage : vehicleCoverages) {
+            vehicleCoverage.setPolicyId(commercialVehiclePolicyMainInfo.getId());
+            vehicleCoverageMapper.insertVehicleCoverage(vehicleCoverage);
+        }
+        VehiclePremCalSub vehiclePremCalSub = commercialPolicy.getVehiclePremCalSub();
+        vehiclePremCalSub.setPolicyId(commercialVehiclePolicyMainInfo.getId());
+        //保费计算辅助信息
+
+        vehiclePremCalSubMapper.insertVehiclePremCalSub(vehiclePremCalSub);
 
         /*添加商业险客户信息*/
         vehicleCustomerMapper.insertVehicleCustomers(commercialVehicleCustomerInfos);
@@ -251,11 +274,30 @@ public class PolicyServiceImpl implements PolicyService {
         //设置编号
         compulsoryVehiclePolicyMainInfo.setPolicyNo("CPL" + snowflake.nextIdStr());
 
+        List<VehicleCoverage> vehicleCoverages1 = compulsoryPolicy.getVehicleCoverages();
+
+        //设置交强保险的关联保单
+        compulsoryVehiclePolicyMainInfo.setAssociatedPolicyId(commercialVehiclePolicyMainInfo.getId());
         /*保存保险主要信息*/
         vehiclePolicyMainMapper.insertVehiclePolicyMain(compulsoryVehiclePolicyMainInfo);
+
+        //修改商业保险的关联保单
+        commercialVehiclePolicyMainInfo.setAssociatedPolicyId(compulsoryVehiclePolicyMainInfo.getId());
+        vehiclePolicyMainMapper.updateVehiclePolicyMain(commercialVehiclePolicyMainInfo);
+
         /*交强险客户信息*/
         List<VehicleCustomer> compulsoryVehicleCustomerInfos = compulsoryPolicy.getVehicleCustomers();
         compulsoryVehicleCustomerInfos.forEach(vehicleCustomer -> vehicleCustomer.setPolicyId(compulsoryVehiclePolicyMainInfo.getId()));
+
+        //添加险种责任信息对象
+        for (VehicleCoverage vehicleCoverage : vehicleCoverages1) {
+            vehicleCoverage.setPolicyId(compulsoryVehiclePolicyMainInfo.getId());
+            vehicleCoverageMapper.insertVehicleCoverage(vehicleCoverage);
+        }
+        VehiclePremCalSub vehiclePremCalSub1 = compulsoryPolicy.getVehiclePremCalSub();
+        vehiclePremCalSub1.setPolicyId(compulsoryVehiclePolicyMainInfo.getId());
+        //保费计算辅助信息
+        vehiclePremCalSubMapper.insertVehiclePremCalSub(vehiclePremCalSub1);
 
         /*添加交强险客户信息*/
         vehicleCustomerMapper.insertVehicleCustomers(compulsoryVehicleCustomerInfos);
@@ -278,10 +320,13 @@ public class PolicyServiceImpl implements PolicyService {
      */
     @Override
     public int underwriting(Long id) {
-
-
         //这里只是传入了一个id,根据这个id,从t_vehicle_policy_main表找到policy对象，找到关联的另外一个policy对象以后，在进行以后的步骤
-        return 0;
+        try {
+            vehiclePolicyMainMapper.underwritingUpdate(id);
+        }catch (RuntimeException e){
+            return 0;
+        }
+        return 1;
     }
 
     /**
@@ -293,6 +338,7 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public int collect(Long id) {
         //这里只是传入了一个id,根据这个id,从t_vehicle_policy_main表找到policy对象，找到关联的另外一个policy对象以后，在进行以后的步骤
+
         return 0;
     }
 
@@ -315,6 +361,8 @@ public class PolicyServiceImpl implements PolicyService {
      */
     @Override
     public List<VehiclePolicyMain> queryCollect() {
-        return null;
+
+
+        return vehiclePolicyMainMapper.queryCollect();
     }
 }

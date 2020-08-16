@@ -56,10 +56,11 @@ public class PolicyController extends BaseController {
 
         ValidationUtil.ValidResult validResult = ValidationUtil.validateBean(vehiclePolicyMain);
         ValidationUtil.ValidResult validResult1 = ValidationUtil.validateBean(vehiclePolicyMain1);
-        System.out.println("aaa");
-        if (validResult.hasErrors() || validResult1.hasErrors()) {
-            System.out.println("aaa");
-            return toAjax(0);
+        if (validResult.hasErrors() ) {
+            return AjaxResult.error(validResult.getErrors());
+        }
+        if(validResult1.hasErrors()){
+            return AjaxResult.error(validResult1.getErrors());
         }
 
         return toAjax(policyService.create(combinedPolicy));
@@ -94,7 +95,11 @@ public class PolicyController extends BaseController {
      */
     @PostMapping("underwriting")
     public AjaxResult underwriting(Long id) {
-        return toAjax(policyService.underwriting(id));
+        int underwriting = policyService.underwriting(id);
+        if(underwriting == 1){
+            AjaxResult.success("成功");
+        }
+        return toAjax(0);
     }
 
 
@@ -107,34 +112,7 @@ public class PolicyController extends BaseController {
     public TableDataInfo queryCollect() {
         startPage();
         List<VehiclePolicyMain> list = policyService.queryCollect();
-        /**
-         * 模拟返回的对象
-         */
-        list = new ArrayList<>();
-        VehiclePolicyMain vehiclePolicyMain = new VehiclePolicyMain();
-        vehiclePolicyMain.setAssociatedPolicyId(3L);
-        vehiclePolicyMain.setId(4L);
-        vehiclePolicyMain.setEffectiveDate(new Date());
-        vehiclePolicyMain.setExpiryDate(new Date());
-        vehiclePolicyMain.setPolicyNo("CPL00992992");
-        vehiclePolicyMain.setPolicyStatus("3");
-        vehiclePolicyMain.setBusinessSourceCode("1");
-
-        VehiclePolicyMain vehiclePolicyMain1 = new VehiclePolicyMain();
-        vehiclePolicyMain1.setAssociatedPolicyId(4L);
-        vehiclePolicyMain1.setId(3L);
-        vehiclePolicyMain1.setPolicyStatus("3");
-        vehiclePolicyMain1.setEffectiveDate(new Date());
-        vehiclePolicyMain1.setExpiryDate(new Date());
-        vehiclePolicyMain1.setPolicyNo("CCL00992992");
-        vehiclePolicyMain1.setBusinessSourceCode("1");
-
-        list.add(vehiclePolicyMain);
-        list.add(vehiclePolicyMain1);
-
-
         return getDataTable(list);
-
     }
 
     /**

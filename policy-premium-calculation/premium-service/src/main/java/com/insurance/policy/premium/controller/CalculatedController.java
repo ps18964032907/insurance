@@ -3,6 +3,7 @@ package com.insurance.policy.premium.controller;
 import com.insurance.policy.admin.domain.ComBinedPolicy;
 import com.insurance.policy.premium.service.CalculatedService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,7 +22,7 @@ public class CalculatedController {
     @Autowired
     CalculatedService calculatedService;
     @RequestMapping("/calculatePolicy")
-    public ComBinedPolicy calculatePolicy(ComBinedPolicy comBinedPolicy){
+    public ComBinedPolicy calculatePolicy(@RequestBody ComBinedPolicy comBinedPolicy){
         try {
             return calculatedService.calculatedPremium(comBinedPolicy);
         } catch (ExecutionException | InterruptedException e) {

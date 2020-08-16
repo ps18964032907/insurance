@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.util.concurrent.Callable;
 
 /**
- * 车辆指标系统线程连接
+ * 车辆指标系统VehicleStatApi线程连接
  */
 public class VehicleStatisticsConnection implements Callable<BigDecimal> {
     private VehicleInsured vehicleInsured;
-    private VehicleStatApi vehicleStatApi= (VehicleStatApi) SpringUtil.getBean("VehicleStatApi");
+    private VehicleStatApi vehicleStatApi= (VehicleStatApi) SpringUtil.getBean(VehicleStatApi.class);
 
     public VehicleStatisticsConnection(VehicleInsured vehicleInsured) {
         this.vehicleInsured = vehicleInsured;
@@ -20,7 +20,7 @@ public class VehicleStatisticsConnection implements Callable<BigDecimal> {
     }
 
     @Override
-    public BigDecimal call() throws Exception {
+    public BigDecimal call(){
         try {
             return vehicleStatApi.queryVehicleStat(vehicleInsured);
         }catch (Exception e){

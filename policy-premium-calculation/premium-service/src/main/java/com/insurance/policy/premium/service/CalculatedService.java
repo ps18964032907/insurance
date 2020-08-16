@@ -1,17 +1,16 @@
 package com.insurance.policy.premium.service;
 
-import com.insurance.policy.admin.domain.ComBinedPolicy;
-import com.insurance.policy.admin.domain.VehicleCoverage;
-import com.insurance.policy.admin.domain.VehiclePremCalSub;
-import com.insurance.policy.admin.domain.VehicleTax;
+import com.insurance.policy.admin.domain.*;
 import com.insurance.policy.premium.connection.*;
 import com.insurance.policy.premium.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -46,11 +45,14 @@ public class CalculatedService {
         //添加车辆指标系统连接
         Future<BigDecimal> vehicleIndexCoefficientFuture = taskExector.submit(new VehicleStatisticsConnection(comBinedPolicy.getCompulsoryPolicy().getVehicleInsured()));
         //添加客户指标系统连接
-        Future<BigDecimal> customerIndexCoefficientFuture = taskExector.submit(new CustomerStatisticsConnection(
-                comBinedPolicy.getCompulsoryPolicy().getVehicleCustomers().stream()
-                        .filter(VehicleCustomer -> (VehicleCustomer.getUserRoleType().equals(1)))
-                        .collect(Collectors.toList()).get(0)
-        ));
+//        List<VehicleCustomer> vehicleCustomers = comBinedPolicy.getCompulsoryPolicy().getVehicleCustomers();
+//        List<VehicleCustomer> collect = vehicleCustomers.stream().filter(VehicleCustomer -> (VehicleCustomer.getUserRoleType().equals("1")))
+//                .collect(Collectors.toList());
+//        VehicleCustomer vehicleCustomer = collect.get(0);
+        Future<BigDecimal> customerIndexCoefficientFuture = taskExector.submit(new CustomerStatisticsConnection(comBinedPolicy.getCompulsoryPolicy().getVehicleCustomers().stream()
+                .filter(VehicleCustomer -> (VehicleCustomer.getUserRoleType().equals("1")))
+                .collect(Collectors.toList()).get(0)));
+
 
 
         final VehiclePremCalSub vehiclePremCalSubForCMP = vehiclePremCalSubForCMPFuture.get();
