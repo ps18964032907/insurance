@@ -14,7 +14,7 @@ public class VehicleStatController {
     public BigDecimal queryVehicleStat(@RequestBody  VehicleInsured vehicleInsured){
         long rand = System.currentTimeMillis();
 
-        BigDecimal bigDecimal = new BigDecimal((rand % 10 + 1) / 10);
+        BigDecimal bigDecimal = new BigDecimal((rand % 10 + 0.1) / 10);
 
         return bigDecimal;
     }

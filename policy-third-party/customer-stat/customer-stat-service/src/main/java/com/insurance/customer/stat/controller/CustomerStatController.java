@@ -14,7 +14,7 @@ public class CustomerStatController {
     public BigDecimal queryCustomerStat(@RequestBody VehicleCustomer vehicleCustomer){
         long rand = System.currentTimeMillis();
 
-        BigDecimal bigDecimal = new BigDecimal((rand % 10 + 1) / 10);
+        BigDecimal bigDecimal = new BigDecimal((rand % 10 + 0.1) / 10);
 
         return bigDecimal;
     }
