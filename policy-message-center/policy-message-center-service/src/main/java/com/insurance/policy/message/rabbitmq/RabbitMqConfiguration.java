@@ -30,7 +30,7 @@ public class RabbitMqConfiguration {
     public String POLICY_MAIN_DEAD_LETTER_ROUTING_KEY="policy_main_dead_letter_routing_key";
 
 
-    //定义一个dead letter Queue的对象，并给队列一个名字：policy_message_center_dead_letter_queue
+    //定义一个dead letter Queue的对象
     @Bean("financeDeadLetterQueue")
     public Queue financeDeadLetterQueue(){
         return new Queue(FINANCE_DEAD_LETTER_QUEUE);
@@ -41,7 +41,7 @@ public class RabbitMqConfiguration {
     }
 
 
-    //定义一个dead letter 交换机，并给交换机一个名字：policy_message_center_dead_letter_exchange
+    //定义一个dead letter 交换机
     @Bean("financeDeadLetterExchange")
     public DirectExchange financeDeadLetterExchange(){
         return new DirectExchange(FINANCE_DEAD_LETTER_EXCHANGE);
@@ -52,7 +52,7 @@ public class RabbitMqConfiguration {
     }
 
 
-    //定义一个delay 交换机，并给交换机一个名字：policy_message_center_delay_exchange
+    //定义一个delay 交换机
     @Bean("financeExchange")
     public DirectExchange financeExchange(){
         return new DirectExchange(FINANCE_EXCHANGE);

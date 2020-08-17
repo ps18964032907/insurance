@@ -26,6 +26,13 @@ public class MessageCenterController {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private MailUtil mailUtil;
+        /*
+            duePremium                           保费
+            id                                 保单id
+            email                          用户邮箱地址
+            FINANCE_QUEUE                        队列
+            FINANCE_DEAD_LETTER_EXCHANGE      死信队列
+         */
 
     @RequestMapping("/SendToFinance")
     public void sendFinanceMessage(BigDecimal duePremium,long id, String email){
@@ -33,6 +40,15 @@ public class MessageCenterController {
         mailUtil.sendFinaceEmail(duePremium,id,email);
         System.out.println("已经发送财务微服务");
     }
+
+    /*
+            id                              保单id
+            email                         用户邮箱地址
+            POLICY_MAIN_QUEUE                队列
+            POLICY_MAIN_DEAD_LETTER_QUEUE  死信队列
+
+         */
+
     @RequestMapping("/SendToPolicyMain")
     public void sendPolicyMainMessage(long id,String email){
         rabbitTemplate.convertAndSend(POLICY_MAIN_EXCHANGE,POLICY_MAIN_ROUTING_KEY,id);
