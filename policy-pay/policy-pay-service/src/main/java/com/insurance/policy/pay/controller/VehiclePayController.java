@@ -4,18 +4,22 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.insurance.policy.admin.domain.ComBinedPolicy;
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
 import com.insurance.policy.pay.config.AlipayConfig;
 import com.insurance.policy.pay.service.VehiclePolicyService;
+import com.insurance.policy.premium.service.CalculatedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author jiangshuai
@@ -32,6 +36,9 @@ public class VehiclePayController {
 
     @Autowired
     VehiclePolicyService vehiclePolicyService;
+
+    @Autowired
+    CalculatedService calculatedService;
 
     @RequestMapping("/payMoney/{id}")
     public void payMoney(HttpServletResponse httpResponse, @PathVariable("id") long id) throws IOException {
@@ -86,5 +93,14 @@ public class VehiclePayController {
     public String doReturn(@PathVariable("id") long id) {
         vehiclePolicyService.updateVehiclePolicyStatues(id);
         return "redirect:/savePolicy?id=" + id;
+    }
+    @RequestMapping("/pay/savePolicy")
+    public ComBinedPolicy calculatePolicy(@RequestBody ComBinedPolicy comBinedPolicy){
+        try {
+            return calculatedService.calculatedPremium(comBinedPolicy);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
