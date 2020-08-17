@@ -35,9 +35,9 @@ public class MessageCenterController {
          */
 
     @RequestMapping("/SendToFinance")
-    public void sendFinanceMessage(BigDecimal duePremium,long id, String email){
+    public void sendFinanceMessage(long id){
         rabbitTemplate.convertAndSend(FINANCE_EXCHANGE,FINANCE_ROUTING_KEY,id);
-        mailUtil.sendFinaceEmail(duePremium,id,email);
+
         System.out.println("已经发送财务微服务");
     }
 

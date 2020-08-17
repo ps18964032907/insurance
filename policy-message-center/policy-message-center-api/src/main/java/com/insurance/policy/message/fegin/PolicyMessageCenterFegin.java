@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @FeignClient(value = "policy-message-center-service",path = "/MessageCenter")
 public interface PolicyMessageCenterFegin {
     @RequestMapping("/SendToFinance")
-    long sendFinanceMessage(BigDecimal duePremium, long id, String email);
+    long sendFinanceMessage(long id);
 
     @RequestMapping("/SendToPolicyMain")
     long sendPolicyMainMessage(long id,String email);
