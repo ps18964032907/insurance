@@ -4,7 +4,6 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
-import com.insurance.policy.admin.controller.PolicyAdminController;
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
 import com.insurance.policy.pay.config.AlipayConfig;
 import com.insurance.policy.pay.service.VehiclePolicyService;
@@ -14,7 +13,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
