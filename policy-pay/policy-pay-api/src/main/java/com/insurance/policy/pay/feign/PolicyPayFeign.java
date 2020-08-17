@@ -9,13 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author jiangshuai
  * @date 2020/8/13 0013 12:04
  */
-@FeignClient(value = "policy-pay-service",fallback = VehiclePayController.class)
+@FeignClient(value = "policy-pay-service", fallback = VehiclePayController.class)
 public interface PolicyPayFeign {
 
-    @RequestMapping("/selectVehiclePolicy/{id}")
-    void selectVehiclePolicyById(@PathVariable("id")long id);
+    @RequestMapping("/pay/payMoney/{id}")
+    void payMoney();
 
-    @RequestMapping("/payMoney/{id}")
-    public void payMoney();
+    @RequestMapping("/notify/{id}")
+    void doNotify(@PathVariable("id") long id);
 
+    @RequestMapping("/return/{id}")
+    String doReturn(@PathVariable("id") long id);
 }

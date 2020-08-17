@@ -4,6 +4,7 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.insurance.policy.admin.controller.PolicyAdminController;
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
 import com.insurance.policy.pay.config.AlipayConfig;
 import com.insurance.policy.pay.service.VehiclePolicyService;
@@ -27,20 +28,12 @@ import java.io.IOException;
 @RequestMapping("/pay")
 @EnableConfigurationProperties(AlipayConfig.class)
 public class VehiclePayController {
+
     @Autowired
     AlipayConfig alipayConfig;
 
     @Autowired
-    RestTemplate restTemplate;
-
-    @Autowired
     VehiclePolicyService vehiclePolicyService;
-
-    @RequestMapping("/selectVehiclePolicy/{id}")
-    public void selectVehiclePolicyById(@PathVariable("id") long id) {
-        System.out.println(id);
-        VehiclePolicyMain vehiclePolicyMain = this.vehiclePolicyService.selectVehiclePolicyById(id);
-    }
 
     @RequestMapping("/payMoney/{id}")
     public void payMoney(HttpServletResponse httpResponse, @PathVariable("id") long id) throws IOException {
@@ -61,7 +54,7 @@ public class VehiclePayController {
             return;
         }
         //商品名称
-        String subject = new String("保单缴费");
+        String subject = new String("账单缴费");
         //商品描述，可以为空
         String body = "蜗牛保险";
         //填充业务参数
@@ -88,12 +81,12 @@ public class VehiclePayController {
 
     @RequestMapping("/notify/{id}")
     public void doNotify(@PathVariable("id") long id) {
-        int result = vehiclePolicyService.updateVehiclePolicyStatues(id);
+        vehiclePolicyService.updateVehiclePolicyStatues(id);
     }
 
     @RequestMapping("/return/{id}")
     public String doReturn(@PathVariable("id") long id) {
-        int result = vehiclePolicyService.updateVehiclePolicyStatues(id);
-        return "business/HTML/index.html";
+        vehiclePolicyService.updateVehiclePolicyStatues(id);
+        return "redirect:/savePolicy?id=" + id;
     }
 }

@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2020/8/15 0015 10:32
  */
 public class VehiclePolicyServiceImpl implements VehiclePolicyService {
+
     @Autowired
     VehiclePayMapper vehiclePayMapper;
+
     @Override
     public VehiclePolicyMain selectVehiclePolicyById(long id) {
         return vehiclePayMapper.selectVehiclePolicyById(id);

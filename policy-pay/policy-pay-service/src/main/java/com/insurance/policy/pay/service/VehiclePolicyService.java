@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface VehiclePolicyService {
+
     VehiclePolicyMain selectVehiclePolicyById(long id);
 
     VehiclePolicyMain selectVehiclePolicyByPolicyNo(String policyNo);
