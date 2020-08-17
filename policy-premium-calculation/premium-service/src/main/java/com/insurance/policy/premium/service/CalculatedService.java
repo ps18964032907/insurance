@@ -1,16 +1,17 @@
 package com.insurance.policy.premium.service;
 
-import com.insurance.policy.admin.domain.*;
+import com.insurance.policy.admin.domain.ComBinedPolicy;
+import com.insurance.policy.admin.domain.VehicleCoverage;
+import com.insurance.policy.admin.domain.VehiclePremCalSub;
+import com.insurance.policy.admin.domain.VehicleTax;
 import com.insurance.policy.premium.connection.*;
 import com.insurance.policy.premium.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CalculatedService {
+    public static final BigDecimal  STANDPREMIUMCMP = new BigDecimal(2000);
+    public static final BigDecimal  STANDPREMIUMCPP = new BigDecimal(1000);
     /**
      * 计算保费
      *
@@ -33,7 +36,6 @@ public class CalculatedService {
 
     @Autowired
     ThreadPoolTaskExecutor taskExector;
-
     public ComBinedPolicy calculatedPremium(ComBinedPolicy comBinedPolicy) throws ExecutionException, InterruptedException {
 
         //添加监管平台商业险连接
@@ -73,14 +75,16 @@ public class CalculatedService {
         BigDecimal vehicleDamageInsurancePremium = vehiclePremCalSubForCMP.getPlatformBenchRiskPrem().multiply(finalDiscountRate).divide(new BigDecimal(0.65), 2, BigDecimal.ROUND_HALF_UP);
         VehicleCoverage vehicleDamageInsurance =comBinedPolicy.getCommercialPolicy().getVehicleCoverages().stream().filter(VehicleCoverage->(VehicleCoverage.getProductionCoverageCode().equals("A1"))).collect(Collectors.toList()).get(0);
         //标准保费2000
-        vehicleDamageInsurance.setStandPremium(new BigDecimal(2000));
+        vehicleDamageInsurance.setStandPremium(STANDPREMIUMCMP);
+        //应缴保费
         vehicleDamageInsurance.setDuePremium(vehicleDamageInsurancePremium);
 
         //第三者责任险保费=第三者责任险保额*0.0015
         VehicleCoverage thirdPartyLiabilityInsurance = comBinedPolicy.getCommercialPolicy().getVehicleCoverages().stream().filter(VehicleCoverage->(VehicleCoverage.getProductionCoverageCode().equals("A3"))).collect(Collectors.toList()).get(0);
         BigDecimal thirdPartyLiabilityInsurancePremium = thirdPartyLiabilityInsurance.getSumInsured();
         //标准保费2000
-        thirdPartyLiabilityInsurance.setStandPremium(new BigDecimal(2000));
+        thirdPartyLiabilityInsurance.setStandPremium(STANDPREMIUMCMP);
+        //应缴保费
         thirdPartyLiabilityInsurance.setDuePremium(thirdPartyLiabilityInsurancePremium);
 
         //折旧的月数=当前系统时间-车辆初登日期（这个要换算成月数）
@@ -90,9 +94,10 @@ public class CalculatedService {
         //全车盗抢险保费=车辆新车购置价*0.9的N次方【N就代表折旧的月数】
         BigDecimal theftRobberyPremium = comBinedPolicy.getCommercialPolicy().getVehicleInsured().getNewVehiclePrice().multiply(new  BigDecimal(0.9).pow(monthDiff));
         VehicleCoverage theftRobbery = comBinedPolicy.getCommercialPolicy().getVehicleCoverages().stream().filter(VehicleCoverage->(VehicleCoverage.getProductionCoverageCode().equals("A2"))).collect(Collectors.toList()).get(0);
+        //应缴保费
         theftRobbery.setDuePremium(theftRobberyPremium);
         //标准保费2000
-        theftRobbery.setStandPremium(new BigDecimal(2000));
+        theftRobbery.setStandPremium(STANDPREMIUMCMP);
 
 
         //Compulsory Traffic Accident Liability Insurance交强险
@@ -100,10 +105,22 @@ public class CalculatedService {
         BigDecimal finalDiscountRate2 =vehiclePremCalSubForCPP.getNcdRate().multiply(vehiclePremCalSubForCPP.getTrafficViolationRate());
         vehiclePremCalSubForCPP.setUwRate(finalDiscountRate2);
         // 保费=1000*优惠系数
-        BigDecimal compulsoryInsurancePremium =  new BigDecimal(1000).multiply(finalDiscountRate2);
+        BigDecimal compulsoryInsurancePremium =  STANDPREMIUMCPP.multiply(finalDiscountRate2);
         //标准保费1000
-        comBinedPolicy.getCompulsoryPolicy().getVehicleCoverages().get(0).setStandPremium(new BigDecimal(1000));
+        comBinedPolicy.getCompulsoryPolicy().getVehicleCoverages().get(0).setStandPremium(STANDPREMIUMCPP);
         comBinedPolicy.getCompulsoryPolicy().getVehicleCoverages().get(0).setDuePremium(compulsoryInsurancePremium);
+
+
+        //设置商业险总标准保费
+        BigDecimal finalStandPremium = STANDPREMIUMCMP.multiply(new BigDecimal(comBinedPolicy.getCommercialPolicy().getVehicleCoverages().size()));
+        comBinedPolicy.getCommercialPolicy().getVehiclePolicyMain().setStandPremium(finalStandPremium);
+        //设置商业险总应缴保费保费
+        BigDecimal finalDuePremium = vehicleDamageInsurancePremium.add(theftRobberyPremium.add(thirdPartyLiabilityInsurancePremium));
+        comBinedPolicy.getCommercialPolicy().getVehiclePolicyMain().setDuePremium(finalDuePremium);
+        //设置交强险总标准保费
+        comBinedPolicy.getCompulsoryPolicy().getVehiclePolicyMain().setStandPremium(STANDPREMIUMCPP);
+        //设置交强险总应缴保费保费
+        comBinedPolicy.getCompulsoryPolicy().getVehiclePolicyMain().setDuePremium(compulsoryInsurancePremium);
 
 
         comBinedPolicy.getCompulsoryPolicy().setVehicleTax(vehicleTax);
