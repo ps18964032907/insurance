@@ -22,13 +22,16 @@
         <result property="epolicyUrl"    column="epolicy_url"    />
     </resultMap>
     <update id="updateVehiclePolicyStatues">
-        update ry_cloud set policy_status = 4 where id=#{id}
+        update ry_cloud set policy_status = 4 where policy_no=#{policyNo}
     </update>
-    <select id="selectVehiclePolicyById"  resultType="com.insurance.policy.admin.domain.VehiclePolicyMain" >
-        select * from ry_cloud where id=#{id}
-    </select>
     <select id="selectVehiclePolicyByPolicyNo"
             resultType="com.insurance.policy.admin.domain.VehiclePolicyMain">
          select * from ry_cloud where policy_no=#{policyNo}
+    </select>
+    <select id="policySelectByStatus" resultType="com.insurance.policy.admin.domain.VehiclePolicyMain">
+        select * from ry_cloud where policy_status = 4
+    </select>
+    <select id="refundSelect" resultType="com.insurance.policy.admin.domain.VehiclePolicyMain">
+        select * from ry_cloud where policy_status = 5
     </select>
 </mapper>

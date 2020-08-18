@@ -1,9 +1,5 @@
 package com.insurance.policy.pay.controller;
 
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.domain.AlipayTradeAppPayModel;
-import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.insurance.policy.admin.domain.ComBinedPolicy;
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
 import com.insurance.policy.pay.config.AlipayConfig;
@@ -16,9 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -28,11 +23,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RefreshScope//增加这个注解可以接受动态刷新配置文件的参数
 @RequestMapping("/pay")
-@EnableConfigurationProperties(AlipayConfig.class)
 public class VehiclePayController {
-
-    @Autowired
-    AlipayConfig alipayConfig;
 
     @Autowired
     VehiclePolicyService vehiclePolicyService;
@@ -40,67 +31,88 @@ public class VehiclePayController {
     @Autowired
     CalculatedService calculatedService;
 
-    @RequestMapping("/payMoney/{id}")
-    public void payMoney(HttpServletResponse httpResponse, @PathVariable("id") long id) throws IOException {
-        /*  String object = restTemplate.getForObject("http://policy-pay-service/pay/payMoney", String.class);*/
-        AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.gatewayUrl, alipayConfig.app_id, alipayConfig.merchant_private_key,
-                "json", alipayConfig.charset, alipayConfig.alipay_public_key, alipayConfig.sign_type);
-        //设置请求参数
-        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
-        alipayRequest.setReturnUrl(alipayConfig.return_url);
-        alipayRequest.setNotifyUrl(alipayConfig.notify_url);
-//        //商品价格总额
-//        String orderNo = (String) session.getAttribute("orderNo");
-      /*  if (id ) {
-            return;
-        }*/
-        VehiclePolicyMain vehiclePolicyMain = this.vehiclePolicyService.selectVehiclePolicyById(id);
-        if (vehiclePolicyService == null) {
-            return;
-        }
-        //商品名称
-        String subject = new String("账单缴费");
-        //商品描述，可以为空
-        String body = "蜗牛保险";
-        //填充业务参数
-        AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
-        model.setBody(body);
-        //model.setOutTradeNo(policyNo);
-        model.setTotalAmount(String.valueOf(vehiclePolicyMain.getDuePremium()));
-        model.setSubject(subject);
-        model.setProductCode("FAST_INSTANT_TRADE_PAY");
-        alipayRequest.setBizModel(model);
-        alipayRequest.setReturnUrl(alipayConfig.return_url);
-        alipayRequest.setNotifyUrl(alipayConfig.notify_url);
-        String form = "";
-        try {
-            form = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        httpResponse.setContentType("text/html;charset=utf-8");
-        httpResponse.getWriter().write(form);//直接将完整的表单html输出到页面
-        httpResponse.getWriter().flush();
-        httpResponse.getWriter().close();
+    /*
+     * @Author jiangshuai
+     * @Description //TODO 缴费
+     * @Date 11:17 2020/8/18 0018
+     * @Param
+     * @since 1.0.0
+     * @return
+     **/
+    @RequestMapping("/payMoney/{policyNo}")
+    public String payMoney(@PathVariable("policyNo") String policyNo, String name, String amount) throws Exception {
+        String pay = vehiclePolicyService.payMoney(policyNo, name, amount);
+        return pay;
     }
 
-    @RequestMapping("/notify/{id}")
-    public void doNotify(@PathVariable("id") long id) {
-        vehiclePolicyService.updateVehiclePolicyStatues(id);
+    @RequestMapping("/policySelectBypolicyNo/{policyNo}")
+    public VehiclePolicyMain policySelectBypolicyNo(@PathVariable("policyNo") String policyNo) throws Exception {
+        VehiclePolicyMain vehiclePolicyMain = vehiclePolicyService.selectVehiclePolicyByPolicyNo(policyNo);
+        return vehiclePolicyMain;
     }
 
-    @RequestMapping("/return/{id}")
-    public String doReturn(@PathVariable("id") long id) {
-        vehiclePolicyService.updateVehiclePolicyStatues(id);
-        return "redirect:/savePolicy?id=" + id;
+    @RequestMapping("/policySelectByStatus")
+    public List<VehiclePolicyMain> policySelectByStatus() throws Exception {
+        List<VehiclePolicyMain> vehiclePolicyMainList = vehiclePolicyService.policySelectByStatus();
+        return vehiclePolicyMainList;
     }
+
+    /*
+     * @Author jiangshuai
+     * @Description //TODO
+     * @Date 11:17 2020/8/18 0018
+     * @Param [policyNo, name, amount]
+     * @since 1.0.0
+     * @return java.lang.String
+     **/
+    @RequestMapping("/refund/{policyNo}")
+    public String refund(@PathVariable("policyNo") String policyNo) throws Exception {
+        VehiclePolicyMain vehiclePolicyMain = vehiclePolicyService.selectVehiclePolicyByPolicyNo(policyNo);
+        BigDecimal amount = vehiclePolicyMain.getDuePremium();
+        String pay = vehiclePolicyService.refund(policyNo, amount);
+        return pay;
+    }
+
+    @RequestMapping("/refundSelect")
+    public List<VehiclePolicyMain> refundSelect() throws Exception {
+        List<VehiclePolicyMain> refundList = vehiclePolicyService.refundSelect();
+        return refundList;
+    }
+
+    @RequestMapping("/notify/{policyNo}")
+    public void doNotify(@PathVariable("policyNo") String policyNo) {
+        vehiclePolicyService.updateVehiclePolicyStatues(policyNo);
+    }
+
+    /*
+     * @Author jiangshuai
+     * @Description //TODO 返回ComBinedPolicy对象
+     * @Date 11:18 2020/8/18 0018
+     * @Param [comBinedPolicy]
+     * @since 1.0.0
+     * @return com.insurance.policy.admin.domain.ComBinedPolicy
+     **/
     @RequestMapping("/pay/savePolicy")
-    public ComBinedPolicy calculatePolicy(@RequestBody ComBinedPolicy comBinedPolicy){
+    public ComBinedPolicy calculatePolicy(@RequestBody ComBinedPolicy comBinedPolicy) {
         try {
             return calculatedService.calculatedPremium(comBinedPolicy);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /*
+     * @Author jiangshuai
+     * @Description //TODO 支付成功之后修改保单状态
+     * @Date 11:17 2020/8/18 0018
+     * @Param [id]
+     * @since 1.0.0
+     * @return java.lang.String
+     **/
+    @RequestMapping("/return/{policyNo}")
+    public String doReturn(@PathVariable("policyNo") String policyNo) {
+        vehiclePolicyService.updateVehiclePolicyStatues(policyNo);
+        return "redirect:/savePolicy?policyNo=" + policyNo;
     }
 }
