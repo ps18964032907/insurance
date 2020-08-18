@@ -2,24 +2,21 @@ package com.insurance.policy.pay.service.impl;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradeCloseRequest;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
 import com.insurance.policy.pay.config.AlipayConfig;
 import com.insurance.policy.pay.mapper.VehiclePayMapper;
 import com.insurance.policy.pay.service.VehiclePolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
  * @author jiangshuai
  * @date 2020/8/15 0015 10:32
  */
-@EnableConfigurationProperties(AlipayConfig.class)
 public class VehiclePolicyServiceImpl implements VehiclePolicyService {
 
     @Autowired
@@ -68,7 +65,7 @@ public class VehiclePolicyServiceImpl implements VehiclePolicyService {
         AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.gatewayUrl, alipayConfig.app_id,
                 alipayConfig.merchant_private_key, "json", alipayConfig.charset,
                 alipayConfig.alipay_public_key, alipayConfig.sign_type);
-        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+        AlipayTradeRefundRequest alipayRequest = new AlipayTradeRefundRequest();
         alipayRequest.setBizContent("\"policyNo\":\"" + policyNo
                 + "\"," + "\"amount\":\"" + amount + "\","
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
@@ -84,5 +81,19 @@ public class VehiclePolicyServiceImpl implements VehiclePolicyService {
     @Override
     public List<VehiclePolicyMain> refundSelect() {
         return vehiclePayMapper.refundSelect();
+    }
+
+    @Override
+    public String policyFailure(String policyNo, String name, String amount)  throws Exception {
+        AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.gatewayUrl, alipayConfig.app_id,
+                alipayConfig.merchant_private_key, "json", alipayConfig.charset,
+                alipayConfig.alipay_public_key, alipayConfig.sign_type);
+        AlipayTradeCloseRequest alipayRequest = new AlipayTradeCloseRequest();
+        alipayRequest.setBizContent("\"policyNo\":\"" + policyNo
+                + "\"," + "\"amount\":\"" + amount + "\","
+                + "\"name\":\"" + name + "\","
+                + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
+        String result = alipayClient.pageExecute(alipayRequest).getBody();
+        return result;
     }
 }

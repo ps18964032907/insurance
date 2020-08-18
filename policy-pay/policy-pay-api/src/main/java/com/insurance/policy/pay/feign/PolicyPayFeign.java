@@ -3,6 +3,7 @@ package com.insurance.policy.pay.feign;
 import com.insurance.policy.admin.domain.ComBinedPolicy;
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
 import com.insurance.policy.pay.controller.VehiclePayController;
+import com.insurance.policy.pay.domain.VehicleCollection;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,7 @@ import java.util.List;
  * @author jiangshuai
  * @date 2020/8/13 0013 12:04
  */
-@FeignClient(value = "policy-pay-service", fallback = VehiclePayController.class)
+@FeignClient(value = "policy-pay-service",path = "/pay")
 public interface PolicyPayFeign {
 
     @RequestMapping("/pay/payMoney/{id}")
@@ -40,4 +41,22 @@ public interface PolicyPayFeign {
 
     @RequestMapping("/refundSelect")
     List<VehiclePolicyMain> refundSelect() throws Exception ;
+
+    /**
+     * 缴费
+     *
+     * @param vehicleCollection 保单收费对象
+     * @return 险种责任信息
+     */
+    @RequestMapping("/collect")
+    public void collect(VehicleCollection vehicleCollection);
+
+    /**
+     * 缴费
+     *
+     * @param vehicleCollection 保单收费对象
+     * @return 险种责任信息
+     */
+
+    public void underwriting(VehicleCollection vehicleCollection);
 }

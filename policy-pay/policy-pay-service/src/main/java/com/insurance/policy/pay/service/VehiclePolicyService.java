@@ -2,7 +2,6 @@ package com.insurance.policy.pay.service;
 
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -24,4 +23,6 @@ public interface VehiclePolicyService {
     List<VehiclePolicyMain> policySelectByStatus();
 
     List<VehiclePolicyMain> refundSelect();
+
+    String policyFailure(String policyNo, String name, String amount) throws Exception ;
 }
