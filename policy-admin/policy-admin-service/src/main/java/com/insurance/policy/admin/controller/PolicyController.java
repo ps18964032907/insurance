@@ -1,9 +1,10 @@
 package com.insurance.policy.admin.controller;
 
+import cn.hutool.core.util.RandomUtil;
 import com.insurance.policy.admin.domain.ComBinedPolicy;
-import com.insurance.policy.admin.domain.CommercialPolicy;
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
 import com.insurance.policy.admin.service.PolicyService;
+import com.insurance.policy.admin.util.RedisUtils;
 import com.insurance.policy.admin.util.ValidationUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
@@ -11,9 +12,6 @@ import com.ruoyi.common.core.web.page.TableDataInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -23,6 +21,8 @@ public class PolicyController extends BaseController {
 
     @Autowired
     private PolicyService policyService;
+    @Autowired
+    private RedisUtils redisUtils;
 
 
     @GetMapping("test")
@@ -51,17 +51,31 @@ public class PolicyController extends BaseController {
      */
     @PostMapping("policy")
     public AjaxResult add(@RequestBody ComBinedPolicy combinedPolicy) {
+
+        //获取随机数的id
+        Long id = combinedPolicy.getCommercialPolicy().getVehiclePolicyMain().getId();
+
+
+
         VehiclePolicyMain vehiclePolicyMain = combinedPolicy.getCommercialPolicy().getVehiclePolicyMain();
         VehiclePolicyMain vehiclePolicyMain1 = combinedPolicy.getCompulsoryPolicy().getVehiclePolicyMain();
 
         ValidationUtil.ValidResult validResult = ValidationUtil.validateBean(vehiclePolicyMain);
         ValidationUtil.ValidResult validResult1 = ValidationUtil.validateBean(vehiclePolicyMain1);
+
+
+
         if (validResult.hasErrors() ) {
             return AjaxResult.error(validResult.getErrors());
         }
         if(validResult1.hasErrors()){
             return AjaxResult.error(validResult1.getErrors());
         }
+
+        if (!redisUtils.hasKey(id+"")) {
+            return AjaxResult.error("请勿重复提交");
+        }
+        redisUtils.del(id+"");
 
         return toAjax(policyService.create(combinedPolicy));
     }
@@ -77,7 +91,6 @@ public class PolicyController extends BaseController {
     @GetMapping("underwriting/list")
     public TableDataInfo queryUnderwriting() {
         startPage();
-        System.out.println("aaaaaaaaaa");
         List<VehiclePolicyMain> list = policyService.queryUnderwriting();
 
         /**
@@ -85,6 +98,13 @@ public class PolicyController extends BaseController {
          */
         return getDataTable(list);
 
+    }
+
+    @GetMapping("getRedisRandom")
+    public String getRedisRandom(){
+        String s = "1"+RandomUtil.randomNumbers(12);
+        redisUtils.set(s,s,600);
+        return s;
     }
 
     /**
@@ -97,7 +117,7 @@ public class PolicyController extends BaseController {
     public AjaxResult underwriting(Long id) {
         int underwriting = policyService.underwriting(id);
         if(underwriting == 1){
-            AjaxResult.success("成功");
+            return AjaxResult.success("成功");
         }
         return toAjax(0);
     }

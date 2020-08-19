@@ -34,6 +34,14 @@ export function updatePolicy(data) {
   })
 }
 
+// 获取随机数
+export function getRedisRandom() {
+  return request({
+    url: '/combined/combined/getRedisRandom',
+    method: 'get'
+  })
+}
+
 // 删除保单主要信息
 export function delPolicy(id) {
   return request({

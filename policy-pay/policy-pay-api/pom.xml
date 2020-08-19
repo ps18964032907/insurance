@@ -11,11 +11,6 @@
 
     <artifactId>policy-pay-api</artifactId>
     <dependencies>
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>policy-pay-service</artifactId>
-            <version>2.1.0</version>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
 </project>

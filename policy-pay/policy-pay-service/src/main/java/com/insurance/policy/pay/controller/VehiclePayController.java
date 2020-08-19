@@ -163,19 +163,19 @@ public class VehiclePayController {
      * @param vehicleCollection 保单收费对象
      * @return 险种责任信息
      */
-    @RequestMapping("/collect")
-    public void collect(VehicleCollection vehicleCollection){
+    @RequestMapping("/underwriting")
+    public void collect(@RequestBody VehicleCollection vehicleCollection){
 
     }
 
     /**
      * 缴费
      *
-     * @param vehicleCollection 保单收费对象
+     * @param comBinedPolicy 交强险和商业险组合对象
      * @return 险种责任信息
      */
-
-    public void underwriting(VehicleCollection vehicleCollection){
+    @RequestMapping("/collect")
+    public void underwriting(@RequestBody ComBinedPolicy comBinedPolicy){
 
     }
 }

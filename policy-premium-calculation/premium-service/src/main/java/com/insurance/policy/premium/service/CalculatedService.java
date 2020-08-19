@@ -99,7 +99,6 @@ public class CalculatedService {
         //标准保费2000
         theftRobbery.setStandPremium(STANDPREMIUMCMP);
 
-
         //Compulsory Traffic Accident Liability Insurance交强险
         //计算最终的优惠系数=无赔款优待系数*交通违法系数
         BigDecimal finalDiscountRate2 =vehiclePremCalSubForCPP.getNcdRate().multiply(vehiclePremCalSubForCPP.getTrafficViolationRate());

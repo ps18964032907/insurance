@@ -96,6 +96,12 @@
             <artifactId>ruoyi-common-swagger</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>policy-admin-api</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
         <!-- RuoYi Common Redis-->
         <dependency>
             <groupId>com.ruoyi</groupId>

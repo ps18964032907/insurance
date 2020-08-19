@@ -1080,7 +1080,7 @@
 </template>
 
 <script>
-import { listPolicy, getPolicy, delPolicy, addPolicy, updatePolicy } from "@/api/policy/policy";
+import { listPolicy, getPolicy, delPolicy, addPolicy, updatePolicy,getRedisRandom} from "@/api/policy/policy";
 
 export default {
   name: "Policy",
@@ -1170,7 +1170,9 @@ export default {
       //     duePrem: ""
       //   }
       // ],
+
       editPolicyForm: {
+        random:0,
         commercialPolicy: {
           vehiclePolicyMain: {
             id: "",
@@ -1578,7 +1580,12 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      let _this = this;
 
+      getRedisRandom().then(response => {
+        _this.editPolicyForm.commercialPolicy.vehiclePolicyMain.id = response;
+        alert(_this.editPolicyForm.commercialPolicy.vehiclePolicyMain.id)
+      })
       // alert('ass')
       this.policyDetailDialogVisible = true;
 

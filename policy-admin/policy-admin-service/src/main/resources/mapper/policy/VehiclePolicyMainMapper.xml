@@ -120,7 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
     <update id="underwritingUpdate">
-         update t_vehicle_policy_main set policy_status = 3 where id = #{id} or associated_policy_id = #{id}
+         update t_vehicle_policy_main set policy_status = 3,update_time = CURRENT_TIMESTAMP where id = #{id} or associated_policy_id = #{id}
     </update>
 
     <delete id="deleteVehiclePolicyMainById" parameterType="Long">

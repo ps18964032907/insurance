@@ -2,12 +2,18 @@ package com.insurance.policy.admin.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import com.insurance.platform.api.InsurancePlatformApi;
 import com.insurance.policy.admin.domain.*;
 import com.insurance.policy.admin.mapper.*;
 import com.insurance.policy.admin.service.PolicyService;
+//import com.insurance.policy.message.fegin.PolicyMessageCenterFegin;
+import com.insurance.policy.pay.domain.VehicleCollection;
 import com.insurance.policy.premium.feign.PolicyPremiumFeign;
+import io.seata.spring.annotation.GlobalTransactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -36,10 +42,12 @@ public class PolicyServiceImpl implements PolicyService {
     @Autowired
     private VehiclePremCalSubMapper vehiclePremCalSubMapper;
 
+    @Autowired
+    private InsurancePlatformApi insurancePlatformApi;
 
     private static Snowflake snowflake = IdUtil.getSnowflake(1, 1);
 
-
+//    private PolicyMessageCenterFegin policyMessageCenterFegin;
     public static void main(String[] args) {
         System.out.println("CCL" + snowflake.nextIdStr());
         System.out.println("CPL" + snowflake.nextIdStr());
@@ -211,11 +219,13 @@ public class PolicyServiceImpl implements PolicyService {
 
 
         ComBinedPolicy combinedPolicy = policyPremiumFeign.calculatePolicy(combinedPolicy1);
+
+        System.out.println(combinedPolicy);
+
         /*商业险*/
         CommercialPolicy commercialPolicy = combinedPolicy.getCommercialPolicy();
         /*交强险*/
         CompulsoryPolicy compulsoryPolicy = combinedPolicy.getCompulsoryPolicy();
-
 
 /*        //险别信息
 //    @Valid
@@ -238,6 +248,7 @@ public class PolicyServiceImpl implements PolicyService {
         /*商业险客户信息*/
         List<VehicleCustomer> commercialVehicleCustomerInfos = commercialPolicy.getVehicleCustomers();
         commercialVehicleCustomerInfos.forEach(vehicleCustomer -> vehicleCustomer.setPolicyId(commercialVehiclePolicyMainInfo.getId()));
+
 
         List<VehicleCoverage> vehicleCoverages = commercialPolicy.getVehicleCoverages();
 
@@ -265,6 +276,7 @@ public class PolicyServiceImpl implements PolicyService {
 
 
 
+
         /*保险主要信息*/
         VehiclePolicyMain compulsoryVehiclePolicyMainInfo = compulsoryPolicy.getVehiclePolicyMain();
         //设置为已报价
@@ -280,6 +292,13 @@ public class PolicyServiceImpl implements PolicyService {
         compulsoryVehiclePolicyMainInfo.setAssociatedPolicyId(commercialVehiclePolicyMainInfo.getId());
         /*保存保险主要信息*/
         vehiclePolicyMainMapper.insertVehiclePolicyMain(compulsoryVehiclePolicyMainInfo);
+
+        //车船税信息
+        VehicleTax vehicleTax = compulsoryPolicy.getVehicleTax();
+        System.out.println(vehicleTax);
+        vehicleTax.setPolicyId(compulsoryVehiclePolicyMainInfo.getId());
+        vehicleTaxMapper.insertVehicleTax(vehicleTax);
+
 
         //修改商业保险的关联保单
         commercialVehiclePolicyMainInfo.setAssociatedPolicyId(compulsoryVehiclePolicyMainInfo.getId());
@@ -312,6 +331,7 @@ public class PolicyServiceImpl implements PolicyService {
         return 1;
     }
 
+
     /**
      * 核保
      *
@@ -319,13 +339,31 @@ public class PolicyServiceImpl implements PolicyService {
      * @return
      */
     @Override
+    //@GlobalTransactional用于开启全局事务，只有在整个事务的入口地方使用这个注解
+    @GlobalTransactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public int underwriting(Long id) {
         //这里只是传入了一个id,根据这个id,从t_vehicle_policy_main表找到policy对象，找到关联的另外一个policy对象以后，在进行以后的步骤
-        try {
-            vehiclePolicyMainMapper.underwritingUpdate(id);
-        }catch (RuntimeException e){
-            return 0;
-        }
+        System.out.println(id);
+        ComBinedPolicy combinedPolicy = getCombinedPolicy(id);
+
+        CompulsoryPolicy compulsoryPolicy = combinedPolicy.getCompulsoryPolicy();
+        CommercialPolicy commercialPolicy = combinedPolicy.getCommercialPolicy();
+        VehiclePremCalSub compulsoryVehiclePremCalSub = insurancePlatformApi.commercialPreConfirm(commercialPolicy);
+        VehiclePremCalSub commercialVehiclePremCalSub1 = insurancePlatformApi.compulsoryPreConfirm(compulsoryPolicy);
+
+        vehiclePremCalSubMapper.updateVehiclePremCalSub(compulsoryVehiclePremCalSub);
+        vehiclePremCalSubMapper.updateVehiclePremCalSub(commercialVehiclePremCalSub1);
+
+        //发送邮箱
+/*        policyMessageCenterFegin.sendFinanceMessage(commercialPolicy.getVehiclePolicyMain().getDuePremium(),commercialPolicy.getVehiclePolicyMain().getId(),null);
+        policyMessageCenterFegin.sendFinanceMessage(compulsoryPolicy.getVehiclePolicyMain().getDuePremium(),compulsoryPolicy.getVehiclePolicyMain().getId(),null);*/
+
+        VehicleCollection vehicleCollection = new VehicleCollection();
+//        BeanUtils.copyProperties();
+
+        vehiclePolicyMainMapper.underwritingUpdate(id);
+
         return 1;
     }
 
@@ -338,6 +376,8 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public int collect(Long id) {
         //这里只是传入了一个id,根据这个id,从t_vehicle_policy_main表找到policy对象，找到关联的另外一个policy对象以后，在进行以后的步骤
+        ComBinedPolicy combinedPolicy = getCombinedPolicy(id);
+
 
         return 0;
     }
@@ -354,6 +394,11 @@ public class PolicyServiceImpl implements PolicyService {
         return vehiclePolicyMainMapper.queryUnderwriting();
     }
 
+/*    @RabbitListener(queues = "policy_main_queue")
+    public void getQueue(Long id){
+        ComBinedPolicy combinedPolicy = getCombinedPolicy(id);
+    }*/
+
     /**
      * 查询待收费的保单列表
      *
@@ -361,7 +406,6 @@ public class PolicyServiceImpl implements PolicyService {
      */
     @Override
     public List<VehiclePolicyMain> queryCollect() {
-
 
         return vehiclePolicyMainMapper.queryCollect();
     }

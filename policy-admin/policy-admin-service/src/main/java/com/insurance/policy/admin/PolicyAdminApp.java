@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableCustomConfig
 @EnableRyFeignClients
 @SpringCloudApplication
-@EnableFeignClients(basePackages = {"com.insurance.policy.premium.feign","com.ruoyi"}) //开启feign功能，指定扫描包
+@EnableFeignClients(basePackages = {"com.insurance.policy.premium.feign","com.ruoyi","com.insurance.platform.api","com.insurance.policy.pay.feign"}) //开启feign功能，指定扫描包
 @MapperScan(basePackages={"com.insurance.policy.admin.mapper"})
 public class PolicyAdminApp {
     public static void main(String[] args) {

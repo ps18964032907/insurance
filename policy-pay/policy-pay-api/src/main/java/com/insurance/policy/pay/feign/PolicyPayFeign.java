@@ -2,7 +2,6 @@ package com.insurance.policy.pay.feign;
 
 import com.insurance.policy.admin.domain.ComBinedPolicy;
 import com.insurance.policy.admin.domain.VehiclePolicyMain;
-import com.insurance.policy.pay.controller.VehiclePayController;
 import com.insurance.policy.pay.domain.VehicleCollection;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,15 +47,15 @@ public interface PolicyPayFeign {
      * @param vehicleCollection 保单收费对象
      * @return 险种责任信息
      */
-    @RequestMapping("/collect")
+    @RequestMapping("/underwriting")
     public void collect(VehicleCollection vehicleCollection);
 
     /**
      * 缴费
      *
-     * @param vehicleCollection 保单收费对象
+     * @param comBinedPolicy 交强险和商业险组合对象
      * @return 险种责任信息
      */
-
-    public void underwriting(VehicleCollection vehicleCollection);
+    @RequestMapping("/collect")
+    public void underwriting(ComBinedPolicy comBinedPolicy);
 }
