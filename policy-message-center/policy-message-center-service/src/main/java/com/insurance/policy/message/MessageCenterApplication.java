@@ -15,7 +15,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 //@EnableCustomConfig
 //@EnableRyFeignClients
 //@EnableCustomSwagger2
-@EnableFeignClients(basePackages = "com.insurance.policy.message")
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class MessageCenterApplication {
     public static void main(String[] args) {
