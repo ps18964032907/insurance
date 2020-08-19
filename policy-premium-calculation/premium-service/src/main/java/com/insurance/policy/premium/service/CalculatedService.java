@@ -25,17 +25,20 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CalculatedService {
-    public static final BigDecimal  STANDPREMIUMCMP = new BigDecimal(2000);
-    public static final BigDecimal  STANDPREMIUMCPP = new BigDecimal(1000);
+    private static final BigDecimal  STANDPREMIUMCMP = new BigDecimal(2000);
+    private static final BigDecimal  STANDPREMIUMCPP = new BigDecimal(1000);
+
+
+    @Autowired
+    ThreadPoolTaskExecutor taskExector;
+
+
     /**
      * 计算保费
      *
      * @param comBinedPolicy
      * @return
      */
-
-    @Autowired
-    ThreadPoolTaskExecutor taskExector;
     public ComBinedPolicy calculatedPremium(ComBinedPolicy comBinedPolicy) throws ExecutionException, InterruptedException {
 
         //添加监管平台商业险连接
