@@ -8,6 +8,7 @@ import com.insurance.policy.admin.mapper.*;
 import com.insurance.policy.admin.service.PolicyService;
 //import com.insurance.policy.message.fegin.PolicyMessageCenterFegin;
 import com.insurance.policy.pay.domain.VehicleCollection;
+import com.insurance.policy.pay.feign.PolicyPayFeign;
 import com.insurance.policy.premium.feign.PolicyPremiumFeign;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +42,9 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Autowired
     private VehiclePremCalSubMapper vehiclePremCalSubMapper;
+
+    @Autowired
+    private PolicyPayFeign policyPayFeign;
 
     @Autowired
     private InsurancePlatformApi insurancePlatformApi;
@@ -360,8 +364,13 @@ public class PolicyServiceImpl implements PolicyService {
         policyMessageCenterFegin.sendFinanceMessage(compulsoryPolicy.getVehiclePolicyMain().getDuePremium(),compulsoryPolicy.getVehiclePolicyMain().getId(),null);*/
 
         VehicleCollection vehicleCollection = new VehicleCollection();
-//        BeanUtils.copyProperties();
+        BeanUtils.copyProperties(commercialPolicy.getVehiclePolicyMain(),vehicleCollection);
 
+        //调用财务服务成功预收费记录
+        policyPayFeign.underwriting(vehicleCollection);
+        BeanUtils.copyProperties(compulsoryPolicy.getVehiclePolicyMain(),vehicleCollection);
+        //调用财务服务成功预收费记录
+        policyPayFeign.underwriting(vehicleCollection);
         vehiclePolicyMainMapper.underwritingUpdate(id);
 
         return 1;
@@ -389,8 +398,6 @@ public class PolicyServiceImpl implements PolicyService {
      */
     @Override
     public List<VehiclePolicyMain> queryUnderwriting() {
-
-
         return vehiclePolicyMainMapper.queryUnderwriting();
     }
 
