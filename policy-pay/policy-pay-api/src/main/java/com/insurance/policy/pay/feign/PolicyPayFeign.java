@@ -42,13 +42,14 @@ public interface PolicyPayFeign {
     List<VehiclePolicyMain> refundSelect() throws Exception ;
 
     /**
-     * 缴费
+     * 核单
      *
      * @param vehicleCollection 保单收费对象
      * @return 险种责任信息
      */
+
     @RequestMapping("/underwriting")
-    public void collect(VehicleCollection vehicleCollection);
+    public void underwriting(VehicleCollection vehicleCollection);
 
     /**
      * 缴费
@@ -57,5 +58,5 @@ public interface PolicyPayFeign {
      * @return 险种责任信息
      */
     @RequestMapping("/collect")
-    public void underwriting(ComBinedPolicy comBinedPolicy);
+    public void collect(ComBinedPolicy comBinedPolicy);
 }
