@@ -7,6 +7,7 @@ import com.insurance.policy.admin.domain.*;
 import com.insurance.policy.admin.mapper.*;
 import com.insurance.policy.admin.service.PolicyService;
 //import com.insurance.policy.message.fegin.PolicyMessageCenterFegin;
+import com.insurance.policy.message.fegin.PolicyMessageCenterFegin;
 import com.insurance.policy.pay.domain.VehicleCollection;
 import com.insurance.policy.pay.feign.PolicyPayFeign;
 import com.insurance.policy.premium.feign.PolicyPremiumFeign;
@@ -51,7 +52,7 @@ public class PolicyServiceImpl implements PolicyService {
 
     private static Snowflake snowflake = IdUtil.getSnowflake(1, 1);
 
-//    private PolicyMessageCenterFegin policyMessageCenterFegin;
+    //    private PolicyMessageCenterFegin policyMessageCenterFegin;
     public static void main(String[] args) {
         System.out.println("CCL" + snowflake.nextIdStr());
         System.out.println("CPL" + snowflake.nextIdStr());
@@ -356,6 +357,7 @@ public class PolicyServiceImpl implements PolicyService {
         VehiclePremCalSub compulsoryVehiclePremCalSub = insurancePlatformApi.commercialPreConfirm(commercialPolicy);
         VehiclePremCalSub commercialVehiclePremCalSub1 = insurancePlatformApi.compulsoryPreConfirm(compulsoryPolicy);
 
+
         vehiclePremCalSubMapper.updateVehiclePremCalSub(compulsoryVehiclePremCalSub);
         vehiclePremCalSubMapper.updateVehiclePremCalSub(commercialVehiclePremCalSub1);
 
@@ -363,15 +365,32 @@ public class PolicyServiceImpl implements PolicyService {
 /*        policyMessageCenterFegin.sendFinanceMessage(commercialPolicy.getVehiclePolicyMain().getDuePremium(),commercialPolicy.getVehiclePolicyMain().getId(),null);
         policyMessageCenterFegin.sendFinanceMessage(compulsoryPolicy.getVehiclePolicyMain().getDuePremium(),compulsoryPolicy.getVehiclePolicyMain().getId(),null);*/
 
-        VehicleCollection vehicleCollection = new VehicleCollection();
-        BeanUtils.copyProperties(commercialPolicy.getVehiclePolicyMain(),vehicleCollection);
+        VehicleCollection vehicleCollection1 = new VehicleCollection();
+        VehicleCollection vehicleCollection2 = new VehicleCollection();
+
+        BeanUtils.copyProperties(commercialPolicy.getVehiclePolicyMain(), vehicleCollection1);
+        BeanUtils.copyProperties(compulsoryPolicy.getVehiclePolicyMain(), vehicleCollection2);
+
+        vehicleCollection1.setPolicyId(vehicleCollection1.getId());
+        vehicleCollection2.setPolicyId(vehicleCollection2.getId());
+
+        vehicleCollection1.setInsertTime(null);
+        vehicleCollection1.setUpdateTime(null);
+        vehicleCollection2.setInsertTime(null);
+        vehicleCollection2.setUpdateTime(null);
+
 
         //调用财务服务成功预收费记录
-        policyPayFeign.underwriting(vehicleCollection);
-        BeanUtils.copyProperties(compulsoryPolicy.getVehiclePolicyMain(),vehicleCollection);
-        //调用财务服务成功预收费记录
-        policyPayFeign.underwriting(vehicleCollection);
-        vehiclePolicyMainMapper.underwritingUpdate(id);
+        int underwriting1 = policyPayFeign.underwriting(vehicleCollection1);
+        int underwriting = policyPayFeign.underwriting(vehicleCollection2);
+        try {
+            vehiclePolicyMainMapper.underwritingUpdate(id);
+        } catch (Exception e) {
+            return 0;
+        }
+        if (underwriting1 == 0 || underwriting == 0) {
+            return 0;
+        }
 
         return 1;
     }
@@ -383,12 +402,12 @@ public class PolicyServiceImpl implements PolicyService {
      * @return
      */
     @Override
-    public int collect(Long id) {
+    public String collect(Long id) {
         //这里只是传入了一个id,根据这个id,从t_vehicle_policy_main表找到policy对象，找到关联的另外一个policy对象以后，在进行以后的步骤
+        System.out.println(id);
         ComBinedPolicy combinedPolicy = getCombinedPolicy(id);
 
-
-        return 0;
+        return policyPayFeign.collect(combinedPolicy);
     }
 
     /**
@@ -415,5 +434,27 @@ public class PolicyServiceImpl implements PolicyService {
     public List<VehiclePolicyMain> queryCollect() {
 
         return vehiclePolicyMainMapper.queryCollect();
+    }
+
+    @Autowired
+    PolicyMessageCenterFegin policyMessageCenterFegin;
+    @Override
+    public int insurancePolicy(Long id) {
+        ComBinedPolicy combinedPolicy = getCombinedPolicy(id);
+        VehiclePremCalSub vehiclePremCalSub = insurancePlatformApi.commercialQuery(combinedPolicy.getCommercialPolicy());
+        VehiclePremCalSub vehiclePremCalSub1 = insurancePlatformApi.compulsoryQuery(combinedPolicy.getCompulsoryPolicy());
+
+        vehiclePremCalSubMapper.updateVehiclePremCalSub(vehiclePremCalSub);
+        vehiclePremCalSubMapper.updateVehiclePremCalSub(vehiclePremCalSub1);
+        vehiclePolicyMainMapper.insurancePolicy(id);
+        String email = "";
+        List<VehicleCustomer> vehicleCustomers = combinedPolicy.getCommercialPolicy().getVehicleCustomers();
+        for (VehicleCustomer vehicleCustomer : vehicleCustomers) {
+            if(vehicleCustomer.getUserRoleType().equals("1"))
+                email = vehicleCustomer.getEmail();
+        }
+        policyMessageCenterFegin.sendPolicyMainMessage(1,email);
+
+        return 1;
     }
 }

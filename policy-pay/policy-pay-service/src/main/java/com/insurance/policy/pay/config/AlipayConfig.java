@@ -1,28 +1,64 @@
 package com.insurance.policy.pay.config;
 
-import org.springframework.context.annotation.Configuration;
+import java.io.FileWriter;
+import java.io.IOException;
 
-@Configuration
+/**
+ * @Author 潘升
+ * @Description //TODO $
+ * @Date 2020/8/17 19:37
+ */
 public class AlipayConfig {
+    // 应用ID,您的APPID，收款账号既是您的APPID对应支付宝账号,开发时使用沙箱提供的APPID，生产环境改成自己的APPID
+    public static String APP_ID = "2016102200740970";
 
-    public String app_id = "2016101800717204";
     // 商户私钥，您的PKCS8格式RSA2私钥
-    public String merchant_private_key = "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDMj2kchPtIGXwUHko8hs+gRZ9k6cXRG3ZyEN3V227HPsizVHE5TkI5WTRhE8ePGaw64J2LvhlQRBJzKLiqwoHptxYHlVIGR53NK8iCYI7NDoiGM4iyJNhXRo773EL+VqMIk7ZCv/O09UhGg2a6ZzMgZnl+yKEEIpj7p8j63dBb8ilGpqOarkx9hpzZXAmKikNF3QJKdLORZeGdginMu7b94V5FSJBOuzeYS4S4T0odIR5a5ZxOeQqRYOVMOKi9pQIKhhb7Rq/ZxvYH3dF2oj+suTGOZNaUkkOpVkac8cf1NcfSlP7ZvUWrEbbTK36nvEdrGAPxgBO1OHo4dZm9mXxNAgMBAAECggEAJuaS16CWZLSr+utztKTycQkscbVfMA/n63M3rIapP2y6IBhL29j9EQjcxCVNyvHX5e53J28EQ1Zep9WzoI2SxQ5TOyfzTExsPus3m0uffHFqFxNPyIjnN1mssUrG1rVFFcl5XKJCR0Rp9Tbh30rm1x+FtU2UCURHEXxr5QEvsXw5PEZy5FFBADdfLv34lTNjC0B3IvsCgcl3tMGMk3nTLYLuyfSlzCAR+UhzSW8m/nrVCHYf5up7ZPfIjtwMF1NtYfUU425J4nIw445NO7oV2cWxjU4xS1iz5OblqVkt/R34cJif/BDXMuPtC2w/mdVXOlGEsR/Pidc9Q1ZAt/OqxQKBgQD/TRzbGgzQxUbD4Z50mSHYtOpRTI/lhZzVuM6Cn2URHz/JLIfcsAwjz3dr+S2oJcCE6o+cmZ8+eELi2VX8ot/AKS1IbH+a7uZotjioeYpmY+RUoXKwO3B4hF3g0KQxbfPZzbP6WImO0j67IY6GEx9/knv7Euq2f7JjyM8m6VzdNwKBgQDNHr58yztjkxqekBFlok5Ny8QzFoorOSkVyhif8jv+OrFaAMsPLMRwC+fyqpTg2WlxIbkZytzUt0xb/lMSkzDLX1rs/RlCTC1oqKbuUtLsKhdeEMt6zQX0r5//vw656f99R42W58QMjHiv6WAbrt1hVYC3FVW8UfTxt8dlFULUmwKBgAfad2jGBF7nsqWT6yvrCf+AkTSvBj4pPgnVBYU/IfzE2VF27Tb8s2LmnuXTZHQntSRhkslecGebi3Mu/FYpLHjcy2fO7p31e2D9OgD0vC0qJXv0+3IwYeVTLRAdWu+qUjYA/ehVkOWz0fovrhKxw+ZIu0ed7Vpv0yz+oGCyDQlBAoGAXKvcMfN75HPsneDHC1z19a3u+YngaMDNcBu7XmAJfMW1pM0g8L0wDtNCOt+YnbF8MvGieCWv+abKp/FSRN0dOXTeVp3O0KYsCdHQgXIH+0zU+9mopNWGMFM8fUYreBFhLY+rR5d0eproV8mfc0JgoH4Jxi2sa4W3nZGDU4b0h6sCgYBgoHYjbW+SpREtbksFZmgP+5kzDqNudS5lxDbczW78bNqFMZYjTnyzbLUxbuTZ6HuH+95jtoPTJP3o8QxkyCKewcKyj5oTclLRlckiZAHPQ8kmu7frhMIaYD1bC6ZhEex27rfTKXErvsBqh0ZqNQkGzqnBqW92rywE3MGTjvN1Ew==";
+    public static String APP_PRIVATE_KEY = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQClsxdnLiS/BGy3nECvpoWoVz+bmbbmfvl49inu37NoBsCxoePizIV2Cw0KppzQOUl66kqcNZOYKLds8K+i8/V3NPVFh/sXUhaVqe4R5GdpZJq08Wu7I3pcMrd7unSes+281XKk8jr/fEI13a+VmscMkxpvz4eVf6EhhQzviN/l6pC+YQWCp2CkhI6HAiDE795wvee1RCnfx1sac3mrsBQJCNbBdcGJ7RvnQwiedEvvQkjVl3k1PUGh219sy9mYtaKYx5GWEuqsyzitYY4f6gfJdKZExdyJWPh6boyShJWFcXYg8mzbuXzF0gPNk+41I4vCwPZQgJswgZLofiGvl1lzAgMBAAECggEAcb/2KvD0bOVetNVhWrPYQW5Tzj/B3Y4BONbUhpWvFZS9J7RZOtLoM9b2Rv+F2zPYi7bXLVFiVyxsby7zg8wyEHmcfvUQnDvQIUIcms/PZfyYb+rj5/48+5odd6TSdjhS1jU5lJ5tfgIReeULqoosZyd9GJDBJRIOzXIHJVEzUyOORaWjtBHvBmrifxymvP8uTHpgWEk2yu+shHEIe8c6ti3eBApqIKfWZ8I3jmA4k54WBE1wD4uyWBs2dbRQyKxodGRiKLgSckVX9/jEdzFX8xnCnbCqUx9GrDVVdMvADeY/fuNP/N54M8kuboABPvLFUN3ltW/MmannhSVOLI9lQQKBgQDeiS1F5+g1lvKiL9Jpi/Ki98wII2L3Tvd3fa/CfmUYAdmT4U+WOjGsoZYN/sXxd7qWeLvl7sI/ddfH5Hh9cgyAN+3pIQJ+rz2U523RJTdW5jkTpanfp+1qQLjLj4DXabAOgFLHvn1G1dXWyNxkjenEZ1bA0q5f3kviOR1XDXqYYwKBgQC+neyaO7NTkJ1gwtlUIuObnX6Y9nBGpqvFaIr30uaYlDTBvmdvLXGJSjOW05OXxgcUHgqhe9UvyQrCH7DP8KSZN+NCh2tVHTP+5jYJkaird9O3uXV1rwfJHC2UQJYrDdjXHSRv0bZ/U9y1Q+jIICztylrGI5QD760Y1OfYcyAfsQKBgEGFYi8S+OvOZeIa8njhG6+gBhLfWGQ4e+RSvU0mqd1Hrig8TpKMz9NkQCoeuWk/N1DWe3xXsBm/OKlCO7ezvLqDvSjG71Udg6Qz/8F0k7aiUmvWew2/A8glBkPpHKZQF+YtIjJtg7U3gJ6cxUdWAV4yjvh3D6Bqcy1IY7sd3NrBAoGBAK9qt+1r2WiioiIEzmmePeXcdz+fMs3h3huqTJEqNeneIfrWFWv73wsgDP/VL3Mx2xvJVbEsO5FhKxRgg5+o7mDOTMbRxpWqbUo7YylFMXqyqFTgSFcHv1t1IgDXuxpeANpdyEVbMd5VN7xchWF+MrqWSRkkbrd8nshGTiIkOEDRAoGAQQecMZx2Fht7JrY5OXyY1hwltt+oBw8zvyqeINL0RhZ2B54SvxxdsABUREXf6qk5+StTtgqrNw8wgurtvO5Eh/eO+qwlsXQEv51qH1r19rY2VNEjfJt0cqZer7RPOD17rdHRKZ2V+h+TKjT1Z41W8Qw5Y84I+j4LCEH+LrFL7TE=";
+
     // 支付宝公钥,查看地址：https://openhome.alipay.com/platform/keyManage.htm 对应APPID下的支付宝公钥。
-    public String alipay_public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6JKxx7glBBq1kjdDBcpL3isxik33+m2L2psyvG0BXiR4QnPI0slYsPgjFdajQ3CgybbkY7iyjy0RF4IXOmb+/ZjJueXAKZ02PL8EtZChdNn0ufwIjCNgikPAEfymrPQIFzCJ2tMRllnjtkbJQ5xNmp3KiElLHslDwK8yyCpV4oCO+dwv6ki7mxW0qsk7rriRi0QqLNkvyNFwQOcTKJNQxws4F4ICzBBklJrVK66KXiMTPQ+pfze750JErp7aXrMPL6mu91OW7LWs5C3pLULAEopMNNPEYj667QUsi/ChKQVBUOZaBWIDwQ9bf6CirFoo2YkkGyxSquQBtip3qoJ5xwIDAQAB";
+    public static String ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwbjGxh7t2QO9TJpS7pW9LHh8hOWLGVd37VFW6W9teSAJ4zt+Mfc7Ci/SpN/Q9BWYHZgMljABRtFM2jQMdQrwxPMFQd+HtbkN/zIIIYckEYIYE+gHPEp7pMTEPyki0CGdj47kB6RmhB1cctPfStzM8wLRlKv8USQLmtQQRrzYEdl7d7cwBOYBj2fLQJrcLXxku1RYd7Q5uNMe1avTZFnACqgq3qqz6sZFf4xiSZz/JvlPQpPeT0uUyKkQ9CJF7Hhww+dgvRpR7IsIcRU/MiQw6oXOrdBxhMp3+IO8ULa+sZHdb6AM/nAO/bmTGeyX+Y3Dxg/kPFP3F0dDRnsXFrkTuQIDAQAB";
 
     // 服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-    public String notify_url = "10.10.10.196/insurance/notify";
-    // 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-    public String return_url = "10.10.10.196/insurance/return";
+    public static String notify_url = "http://localhost:20001/pay/updateCollect";
+
+    // 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问(其实就是支付成功后返回的页面)
+    public static String return_url = "http://localhost:20001/pay/updateCollect";
 
     // 签名方式
-    public String sign_type = "RSA2";
+    public static String SIGN_TYPE = "RSA2";
 
     // 字符编码格式
-    public String charset = "utf-8";
+    public static String CHARSET = "utf-8";
+
+    // 支付宝网关，这是沙箱的网关
+    public static String GATEWAYURL = "https://openapi.alipaydev.com/gateway.do";
 
     // 支付宝网关
-    public String gatewayUrl = "https://openapi.alipaydev.com/gateway.do";
+    public static String log_path = "C:\\";
 
+
+//↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+    /**
+     * 写日志，方便测试（看网站需求，也可以改成把记录存入数据库）
+     * @param sWord 要写入日志里的文本内容
+     */
+    public static void logResult(String sWord) {
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(log_path + "alipay_log_" + System.currentTimeMillis()+".txt");
+            writer.write(sWord);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
+

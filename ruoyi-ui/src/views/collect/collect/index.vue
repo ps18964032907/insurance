@@ -411,6 +411,12 @@ export default {
       // this.reset();
       const id = row.id || this.ids
       doCollect(id).then(response => {
+        alert("aaaa")
+        document.querySelector('body').innerHTML = response;
+        const div = document.createElement('div');
+        document.body.appendChild(div);
+        document.forms[0].submit();
+
         if (response.code === 200) {
           // this.msgSuccess("修改成功");
           // this.open = false;

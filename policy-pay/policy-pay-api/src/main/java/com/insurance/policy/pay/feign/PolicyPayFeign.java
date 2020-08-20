@@ -17,30 +17,6 @@ import java.util.List;
 @FeignClient(value = "policy-pay-service",path = "/pay")
 public interface PolicyPayFeign {
 
-    @RequestMapping("/pay/payMoney/{id}")
-    void payMoney();
-
-    @RequestMapping("/notify/{id}")
-    void doNotify(@PathVariable("id") long id);
-
-    @RequestMapping("/return/{id}")
-    String doReturn(@PathVariable("id") long id);
-
-    @RequestMapping("/pay/savePolicy")
-    ComBinedPolicy calculatePolicy(@RequestBody ComBinedPolicy comBinedPolicy);
-
-    @RequestMapping("/policySelectBypolicyNo/{policyNo}")
-    VehiclePolicyMain policySelectBypolicyNo(@PathVariable("policyNo") String policyNo) throws Exception ;
-
-    @RequestMapping("/policySelectByStatus")
-    List<VehiclePolicyMain> policySelectByStatus() throws Exception ;
-
-    @RequestMapping("/refund/{policyNo}")
-    String refund(@PathVariable("policyNo") String policyNo) throws Exception;
-
-    @RequestMapping("/refundSelect")
-    List<VehiclePolicyMain> refundSelect() throws Exception ;
-
     /**
      * 核单
      *
@@ -48,8 +24,8 @@ public interface PolicyPayFeign {
      * @return 险种责任信息
      */
 
-    @RequestMapping("/underwriting")
-    public void underwriting(VehicleCollection vehicleCollection);
+    @RequestMapping("underwriting")
+    public int underwriting(VehicleCollection vehicleCollection);
 
     /**
      * 缴费
@@ -57,6 +33,6 @@ public interface PolicyPayFeign {
      * @param comBinedPolicy 交强险和商业险组合对象
      * @return 险种责任信息
      */
-    @RequestMapping("/collect")
-    public void collect(ComBinedPolicy comBinedPolicy);
+    @RequestMapping("collect")
+    public String collect(ComBinedPolicy comBinedPolicy);
 }

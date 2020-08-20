@@ -63,4 +63,6 @@ public interface VehiclePolicyMainMapper
     int underwritingUpdate(Long id);
 
     List<VehiclePolicyMain> queryCollect();
+
+    int insurancePolicy(Long id);
 }

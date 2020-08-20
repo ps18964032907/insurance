@@ -60,6 +60,7 @@ public class PolicyController extends BaseController {
         VehiclePolicyMain vehiclePolicyMain = combinedPolicy.getCommercialPolicy().getVehiclePolicyMain();
         VehiclePolicyMain vehiclePolicyMain1 = combinedPolicy.getCompulsoryPolicy().getVehiclePolicyMain();
 
+        //
         ValidationUtil.ValidResult validResult = ValidationUtil.validateBean(vehiclePolicyMain);
         ValidationUtil.ValidResult validResult1 = ValidationUtil.validateBean(vehiclePolicyMain1);
 
@@ -116,10 +117,8 @@ public class PolicyController extends BaseController {
     @PostMapping("underwriting")
     public AjaxResult underwriting(Long id) {
         int underwriting = policyService.underwriting(id);
-        if(underwriting == 1){
-            return AjaxResult.success("成功");
-        }
-        return toAjax(0);
+
+        return toAjax(underwriting);
     }
 
 
@@ -142,7 +141,7 @@ public class PolicyController extends BaseController {
      * @return
      */
     @PostMapping("collect")
-    public AjaxResult collect(Long id) {
-        return toAjax(policyService.collect(id));
+    public String collect(Long id) {
+        return policyService.collect(id);
     }
 }
