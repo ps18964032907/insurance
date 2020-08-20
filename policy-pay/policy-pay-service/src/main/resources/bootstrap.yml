@@ -22,9 +22,16 @@ spring:
         file-extension: yml
         # 共享配置
         shared-dataids: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+
 # Mybatis配置
 mybatis:
   # 搜索指定包别名
   typeAliasesPackage: com.insurance.policy.pay
   # 配置mapper的扫描，找到所有的mapper.xml映射文件
   mapperLocations: classpath:mapper/**/*.xml
+logging:
+  level:
+    com:
+      spring:
+        jiminshiro:
+          mapper: debug

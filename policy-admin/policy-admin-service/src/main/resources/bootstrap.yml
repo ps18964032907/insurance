@@ -27,6 +27,9 @@ spring:
         file-extension: yml
         # 共享配置
         shared-dataids: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+    alibaba:
+      seata:
+        tx-service-group: default #seata事务组名称
 # Mybatis配置
 mybatis:
   # 搜索指定包别名

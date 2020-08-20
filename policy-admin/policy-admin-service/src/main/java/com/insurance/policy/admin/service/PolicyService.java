@@ -15,10 +15,11 @@ public interface PolicyService {
 
     int underwriting(Long id);
 
-    int collect(Long id);
+    String collect(Long id);
 
     List<VehiclePolicyMain> queryUnderwriting();
 
     List<VehiclePolicyMain> queryCollect();
 
+    int insurancePolicy(Long id);
 }
