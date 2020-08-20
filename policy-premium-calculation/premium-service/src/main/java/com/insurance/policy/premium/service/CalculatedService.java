@@ -84,7 +84,7 @@ public class CalculatedService {
 
         //第三者责任险保费=第三者责任险保额*0.0015
         VehicleCoverage thirdPartyLiabilityInsurance = comBinedPolicy.getCommercialPolicy().getVehicleCoverages().stream().filter(VehicleCoverage->(VehicleCoverage.getProductionCoverageCode().equals("A3"))).collect(Collectors.toList()).get(0);
-        BigDecimal thirdPartyLiabilityInsurancePremium = thirdPartyLiabilityInsurance.getSumInsured();
+        BigDecimal thirdPartyLiabilityInsurancePremium = thirdPartyLiabilityInsurance.getSumInsured().multiply(new BigDecimal(0.0015));
         //标准保费2000
         thirdPartyLiabilityInsurance.setStandPremium(STANDPREMIUMCMP);
         //应缴保费
