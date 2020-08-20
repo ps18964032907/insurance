@@ -94,8 +94,8 @@ public class CalculatedService {
         Date vehicleFirstRegDate =  comBinedPolicy.getCommercialPolicy().getVehicleInsured().getVehicleFirstRegDate();
         int monthDiff = DateUtil.getMonthDiff(new Date(), vehicleFirstRegDate);
 
-        //全车盗抢险保费=车辆新车购置价*0.9的N次方【N就代表折旧的月数】
-        BigDecimal theftRobberyPremium = comBinedPolicy.getCommercialPolicy().getVehicleInsured().getNewVehiclePrice().multiply(new  BigDecimal(0.9).pow(monthDiff));
+        //全车盗抢险保费=车辆新车购置价*0.8的N次方【N就代表折旧的月数】
+        BigDecimal theftRobberyPremium = comBinedPolicy.getCommercialPolicy().getVehicleInsured().getNewVehiclePrice().multiply(new  BigDecimal(0.8).pow(monthDiff));
         VehicleCoverage theftRobbery = comBinedPolicy.getCommercialPolicy().getVehicleCoverages().stream().filter(VehicleCoverage->(VehicleCoverage.getProductionCoverageCode().equals("A2"))).collect(Collectors.toList()).get(0);
         //应缴保费
         theftRobbery.setDuePremium(theftRobberyPremium);
